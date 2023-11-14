@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include <JuceHeader.h>
 #include "Global.h"
 #include "Trombone.h"
 #include "LowPass.h"

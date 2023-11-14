@@ -259,10 +259,10 @@ Path Tube::visualiseState (Graphics& g, double visualScaling, bool pressure)
 //            {
 //                std::cout << x;
 //            }
-            if (isnan(x) || isinf(abs(x) || isnan(pressure ? up[1][y] : uv[1][y]) || isinf(abs(pressure ? up[1][y] : uv[1][y]))))
-            {
-                std::cout << "Wait" << std::endl;
-            };
+            //if (isnan(x) || isinf(abs(x) || isnan(pressure ? up[1][y] : uv[1][y]) || isinf(abs(pressure ? up[1][y] : uv[1][y]))))
+            //{
+            //    std::cout << "Wait" << std::endl;
+            //};
             
         } else {
             if (!switchToW)
@@ -276,10 +276,10 @@ Path Tube::visualiseState (Graphics& g, double visualScaling, bool pressure)
 //            {
 //                std::cout << ", " << x << std::endl;;
 //            }
-            if (isnan(x) || isinf(abs(x) || isnan(pressure ? wp[1][y-M-1] : wv[1][y-M]) || isinf(abs(pressure ? wp[1][y-M-1] : wv[1][y-M]))))
-            {
-                std::cout << "Wait" << std::endl;
-            };
+            //if (isnan(x) || isinf(abs(x) || isnan(pressure ? wp[1][y-M-1] : wv[1][y-M]) || isinf(abs(pressure ? wp[1][y-M-1] : wv[1][y-M]))))
+            //{
+            //    std::cout << "Wait" << std::endl;
+            //};
 
         }
        
