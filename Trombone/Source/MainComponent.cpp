@@ -120,18 +120,18 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
     
     float output = 0.0;
 
-//    if (Global::useMicInput)
-//    {
-//        const float* input = bufferToFill.buffer->getReadPointer (0, bufferToFill.startSample);
-//        double avg = 0;
-//        for (int i = 0; i < bufferToFill.numSamples; ++i)
-//            avg += input[i] * input[i];
-//        avg /= bufferToFill.numSamples;
-//        avg = sqrt(avg);
-//
-//        pressureVal = 1200 * avg;
-//        trombone->setExtVals(1200 * avg, lipFreqVal, LVal);
-//    }
+   if (Global::useMicInput)
+   {
+       const float* input = bufferToFill.buffer->getReadPointer (0, bufferToFill.startSample);
+       double avg = 0;
+       for (int i = 0; i < bufferToFill.numSamples; ++i)
+           avg += input[i] * input[i];
+       avg /= bufferToFill.numSamples;
+       avg = sqrt(avg);
+
+       pressureVal = 10000 * avg;
+       trombone->setExtVals(10000 * avg, lipFreqVal, LVal);
+   }
     
     for (int i = 0; i < bufferToFill.numSamples; ++i)
     {
