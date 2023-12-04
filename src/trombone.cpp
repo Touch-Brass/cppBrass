@@ -14,44 +14,42 @@
 #include <cmath>
 
 //==============================================================================
-Trombone::Trombone (NamedValueSet& parameters, double k, std::vector<std::vector<double>>& geometry) : k (k),
-Pm (*parameters.getVarPointer ("Pm"))
+Trombone::Trombone(NamedValueSet &parameters, double k, std::vector<std::vector<double>> &geometry) : k(k),
+                                                                                                      Pm(*parameters.getVarPointer("Pm"))
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
-    
-    tube = std::make_unique<Tube> (parameters, k, geometry);
-    addAndMakeVisible (tube.get());
-    lipModel = std::make_unique<LipModel> (parameters, k);
-    lipModel->setTubeParameters (tube->getH(),
-                                 tube->getRho(),
-                                 tube->getC(),
-                                 tube->getSBar(0),
-                                 tube->getSHalf(0));
-    addAndMakeVisible (lipModel.get());
 
-    massState.open ("massState.csv");
-    pState.open ("pState.csv");
-    vState.open ("vState.csv");
-    alfSave.open ("alfSave.csv");
-    MSave.open ("MSave.csv");
-    MwSave.open ("MwSave.csv");
-    energySave.open ("energySave.csv");
-    scaledTotEnergySave.open ("scaledTotEnergySave.csv");
-    
-    maxMSave.open ("maxM.csv");
-    maxMwSave.open ("maxMw.csv");
+    tube = std::make_unique<Tube>(parameters, k, geometry);
+    addAndMakeVisible(tube.get());
+    lipModel = std::make_unique<LipModel>(parameters, k);
+    lipModel->setTubeParameters(tube->getH(),
+                                tube->getRho(),
+                                tube->getC(),
+                                tube->getSBar(0),
+                                tube->getSHalf(0));
+    addAndMakeVisible(lipModel.get());
 
-    Ssave.open ("SSave.csv");
-    output.open ("output.csv");
+    massState.open("massState.csv");
+    pState.open("pState.csv");
+    vState.open("vState.csv");
+    alfSave.open("alfSave.csv");
+    MSave.open("MSave.csv");
+    MwSave.open("MwSave.csv");
+    energySave.open("energySave.csv");
+    scaledTotEnergySave.open("scaledTotEnergySave.csv");
+
+    maxMSave.open("maxM.csv");
+    maxMwSave.open("maxMw.csv");
+
+    Ssave.open("SSave.csv");
+    output.open("output.csv");
 
     maxMSave << tube->getMaxM();
     maxMwSave << tube->getMaxMw();
 
     maxMSave.close();
     maxMwSave.close();
-
-    
 }
 
 Trombone::~Trombone()
@@ -65,23 +63,24 @@ void Trombone::calculate()
         tube->updateL();
     if (shouldLowPassConnection)
         tube->lowPassConnection();
-    
+
     if (global::bowing)
         tube->calculateVRel();
-    
+
     tube->calculateVelocity();
-    
+
     if (global::connectedToLip)
-    {   lipModel->setTubeStates (tube->getP (1, 0), tube->getV (0, 0));
+    {
+        lipModel->setTubeStates(tube->getP(1, 0), tube->getV(0, 0));
         lipModel->calculateCollision();
         lipModel->calculateDeltaP();
         lipModel->calculate();
-        tube->setFlowVelocities (lipModel->getUb(), lipModel->getUr());
+        tube->setFlowVelocities(lipModel->getUb(), lipModel->getUr());
     }
-    
+
     tube->calculatePressure();
     tube->calculateRadiation();
-    
+
     if (shouldDispCorr)
         tube->dispCorr();
 
@@ -92,7 +91,7 @@ void Trombone::calculate()
 void Trombone::calculateEnergy()
 {
     bool excludeLip = !global::connectedToLip;
-//    bool excludeLip = false;
+    //    bool excludeLip = false;
 
     double kinEnergy = tube->getKinEnergy();
     double potEnergy = tube->getPotEnergy();
@@ -102,10 +101,10 @@ void Trombone::calculateEnergy()
     double lipCollisionEnergy = lipModel->getCollisionEnergy();
     double lipPower = lipModel->getPower();
     double lipDamp = lipModel->getDampEnergy();
-    
+
     double totEnergy = kinEnergy + potEnergy + radEnergy + (excludeLip ? 0 : (lipEnergy + lipCollisionEnergy));
     double energy1 = tube->getKinEnergy1() + tube->getPotEnergy1() + tube->getRadEnergy1() + (excludeLip ? 0 : (lipModel->getLipEnergy1() + lipModel->getCollisionEnergy1()));
-    
+
     energySave << kinEnergy << ", ";
     energySave << potEnergy << ", ";
     energySave << radEnergy << ", ";
@@ -116,8 +115,8 @@ void Trombone::calculateEnergy()
     energySave << lipDamp << ", ";
     energySave << energy1 << ";\n";
 
-//     scaledTotEnergy = (totEnergy + lipModel->getPower() + lipModel->getDampEnergy() + tube->getRadDampEnergy() - energy1) / energy1;
-    scaledTotEnergy = (totEnergy + lipPower + lipDamp + radDamp - energy1) / pow(2, floor (log2 (energy1)));
+    //     scaledTotEnergy = (totEnergy + lipModel->getPower() + lipModel->getDampEnergy() + tube->getRadDampEnergy() - energy1) / energy1;
+    scaledTotEnergy = (totEnergy + lipPower + lipDamp + radDamp - energy1) / pow(2, floor(log2(energy1)));
     scaledTotEnergySave << scaledTotEnergy << ";\n";
 }
 
@@ -132,22 +131,22 @@ void Trombone::saveToFiles()
     if (!global::onlyWriteOutput)
     {
         massState << getLipOutput() << ";\n";
-        
+
         for (int l = 0; l <= tube->getMaxN() + 1; ++l)
         {
-            pState << tube->getP (0, l) << ", ";
+            pState << tube->getP(0, l) << ", ";
             if (l < tube->getMaxN())
-                vState << tube->getV (0, l) << ", ";
+                vState << tube->getV(0, l) << ", ";
         }
         pState << ";\n";
         vState << ";\n";
         alfSave << tube->getAlf() << ";\n";
         MSave << tube->getM() << ";\n";
         MwSave << tube->getMw() << ";\n";
-        
+
         for (int l = 0; l <= tube->getMaxN() + 1; ++l)
         {
-            Ssave << tube->getSBar (l);
+            Ssave << tube->getSBar(l);
             if (l == tube->getMaxN() + 1)
                 Ssave << ";\n";
             else
@@ -155,7 +154,6 @@ void Trombone::saveToFiles()
         }
     }
     output << tube->getOutput() << ";\n";
-    
 }
 
 void Trombone::closeFiles()
@@ -171,5 +169,4 @@ void Trombone::closeFiles()
     Ssave.close();
     output.close();
     tube->closeFiles();
-
 }

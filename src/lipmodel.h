@@ -15,22 +15,26 @@
 class LipModel
 {
 public:
-    LipModel (NamedValueSet& parameters, double k);
+    LipModel(NamedValueSet &parameters, double k);
     ~LipModel();
 
-    void setTubeParameters (double hIn, double rho, double c, double SBar0In, double SHalf0In);
-    void setTubeStates (double p, double vNext) { p0 = p; vNext0 = vNext; };
+    void setTubeParameters(double hIn, double rho, double c, double SBar0In, double SHalf0In);
+    void setTubeStates(double p, double vNext)
+    {
+        p0 = p;
+        vNext0 = vNext;
+    };
     void calculateCollision();
     void calculateDeltaP();
-    
+
     double getUb() { return Ub; };
     double getUr() { return Ur; };
 
     double getY() { return y; };
-    
+
     void calculate();
     void updateStates();
-    
+
     double getLipEnergy();
     double getLipEnergy1() { return lipEnergy1; };
 
@@ -39,35 +43,37 @@ public:
 
     double getDampEnergy();
     double getPower();
-    
+
     void refreshInputParams();
-    
-    void setExtVals (double pValIn, double lFVal) { pressureVal = pValIn; lipFreqVal = lFVal; };
-    
-    
-    
+
+    void setExtVals(double pValIn, double lFVal)
+    {
+        pressureVal = pValIn;
+        lipFreqVal = lFVal;
+    };
+
 private:
     double k, omega0, M, sig, Sr, w, Kcol, alpha, H0, b, g, kappa, psi, psiPrev, Pm, Ub, Ur;
     double etaNext, eta, etaPrev;
     double oOk, omega0Sq, kO2M, oOM, oOa1, oO2k;
     double h, SBar0, SHalf0, vNext0, p0;
-    
+
     double a1, a2, a3, b1, b2, c1, c2, c3;
     double a1Coeff, bCoeff, c1Coeff;
     double deltaPTerm, deltaP;
-    
+
     double oOAlpha, beta, xi, gammaR;
-    
+
     double yNext;
     double y;
     double yPrev;
-//    double yTmp;
-    
+    //    double yTmp;
+
     double lipEnergy1 = -1;
     double colEnergy1 = -1;
-    
+
     double pHPrev, qHPrev = 0;
-    
+
     double pressureVal;
     double lipFreqVal;
 

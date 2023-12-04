@@ -27,12 +27,11 @@ public:
     ~MainComponent();
 
     //==============================================================================
-    void prepareToPlay (int samplesPerBlockExpected, double sampleRate);
-    void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill);
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate);
+    void getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill);
     void releaseResources();
 
 private:
-
     // Your private member variables go here...
     std::unique_ptr<Trombone> trombone;
     double fs;
@@ -41,16 +40,16 @@ private:
     std::vector<std::vector<double>> geometry;
     double pressureVal, lipFreqVal, LVal;
     int controlHeight, controlY;
-    
+
     bool record = true;
     double mouseLocX = 0;
     double mouseLocY = 0;
     bool mouseEllipseVisible = false;
-    
+
     std::unique_ptr<LowPass> lowPass;
-    
+
     Slider pressureSlider;
-    Rectangle<int> sliderBounds { 0, 0, 100, 40 };
+    Rectangle<int> sliderBounds{0, 0, 100, 40};
     Rectangle<int> bottomBar;
     bool init = true;
     double pressureValSave = 0;
