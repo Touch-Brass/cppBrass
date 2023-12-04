@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include "Global.h"
-#include "Tube.h"
-#include "LipModel.h"
+#include "global.h"
+#include "tube.h"
+#include "lipmodel.h"
 //==============================================================================
 /*
 */

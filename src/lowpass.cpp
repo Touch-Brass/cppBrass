@@ -8,7 +8,7 @@
   ==============================================================================
 */
 
-#include "LowPass.h"
+#include "lowpass.h"
 
 //==============================================================================
 LowPass::LowPass (std::vector<double> bCoeffs, std::vector<double> aCoeffs)

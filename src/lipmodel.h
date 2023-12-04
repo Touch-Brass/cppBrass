@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "Global.h"
+#include "global.h"
 
 class LipModel
 {

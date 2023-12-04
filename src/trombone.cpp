@@ -8,7 +8,7 @@
   ==============================================================================
 */
 
-#include "Trombone.h"
+#include "trombone.h"
 
 #include <memory>
 #include <cmath>

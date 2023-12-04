@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "Global.h"
-#include "Trombone.h"
-#include "LowPass.h"
+#include "global.h"
+#include "trombone.h"
+#include "lowpass.h"
 
 #include <memory>
 
