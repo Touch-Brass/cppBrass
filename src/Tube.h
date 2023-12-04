@@ -10,23 +10,19 @@
 
 #pragma once
 
-#include <JuceHeader.h>
 #include "Global.h"
+
+#include <vector>
 
 
 //==============================================================================
 /*
 */
-class Tube  : public juce::Component
+class Tube
 {
 public:
     Tube (NamedValueSet& parameters, double k, std::vector<std::vector<double>>& geometry);
-    ~Tube() override;
-
-    Path drawGeometry (Graphics& g, int topOrBottom);
-    Path visualiseState (Graphics& g, double visualScaling, bool pressure);
-    void paint (juce::Graphics&) override;
-    void resized() override;
+    ~Tube();
 
     void calculateThermodynamicConstants();
     void calculateGeometry();
@@ -210,5 +206,4 @@ private:
     
     double outputVal = 0;
     double numOutputPoints = 10;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Tube)
 };

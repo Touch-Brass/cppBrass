@@ -8,8 +8,9 @@
   ==============================================================================
 */
 
-#include <JuceHeader.h>
 #include "LipModel.h"
+
+#include <cmath>
 
 //==============================================================================
 LipModel::LipModel (NamedValueSet& parameters, double k) : k (k),
@@ -65,25 +66,7 @@ LipModel::~LipModel()
 {
 }
 
-void LipModel::paint (juce::Graphics& g)
-{
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
 
-       You should replace everything in this method with your own
-       drawing code..
-    */
-
-//    g.fillAll (Colours::yellow);   // clear the background;
-    
-}
-
-void LipModel::resized()
-{
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
-}
 void LipModel::setTubeParameters (double hIn, double rho, double c, double SBar0In, double SHalf0In)
 {
     h = hIn;
@@ -214,7 +197,7 @@ double LipModel::getPower()
 void LipModel::refreshInputParams()
 {
     Pm = pressureVal;
-    omega0 = lipFreqVal * 2.0 * double_Pi;
+    omega0 = lipFreqVal * 2.0 * M_PI;
     omega0Sq = omega0 * omega0;
     a1Coeff = 2.0 * oOk + omega0Sq * k + sig;
 }

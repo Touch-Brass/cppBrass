@@ -8,8 +8,9 @@
   ==============================================================================
 */
 
-#include <JuceHeader.h>
 #include "Tube.h"
+
+#include <cmath>
 
 //==============================================================================
 Tube::Tube (NamedValueSet& parameters, double k, std::vector<std::vector<double>>& geometry) : k (k), L (*parameters.getVarPointer("L")), T (*parameters.getVarPointer("T")), geometry (geometry)
@@ -86,7 +87,7 @@ Tube::Tube (NamedValueSet& parameters, double k, std::vector<std::vector<double>
         {
             for (int l = start; l < end; ++l)
             {
-                upVecs[n][l] = scaling * (1.0 - cos (2.0 * double_Pi * (l-start) / static_cast<float>(end - start))) * 0.5;
+                upVecs[n][l] = scaling * (1.0 - cos (2.0 * M_PI * (l-start) / static_cast<float>(end - start))) * 0.5;
             }
         }
     }
@@ -116,7 +117,7 @@ Tube::Tube (NamedValueSet& parameters, double k, std::vector<std::vector<double>
     
     // Radiation
     R1 = rho * c;
-    rL = sqrt(SBar[Nint]) / (2.0 * double_Pi);
+    rL = sqrt(SBar[Nint]) / (2.0 * M_PI);
     Lr = 0.613 * rho * rL;
     R2 = 0.505 * rho * c;
     Cr = 1.111 * rL / (rho * c * c);
@@ -173,132 +174,6 @@ Tube::~Tube()
 
 }
 
-void Tube::paint (juce::Graphics& g)
-{
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
-
-       You should replace everything in this method with your own
-       drawing code..
-    */
-//    std::cout << alf << std::endl;
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
-
-//    if (init)
-//    {
-    g.setColour(Colours::white);
-    double x1 = outerSlideLoc1 / static_cast<double>(Nint - 1) * getWidth();
-    double x2 = outerSlideLoc2 / static_cast<double>(Nint - 1) * getWidth();
-
-    g.setOpacity (0.5);
-    Line<float> line1 (x1, getHeight() * 0.2, x1, getHeight() * 0.8);
-    Line<float> line2 (x2, getHeight() * 0.2, x2, getHeight() * 0.8);
-    std::vector<float> dashedLineVals (10, 10.0f);
-    g.drawDashedLine (line1, &dashedLineVals[0], 10);
-    g.drawDashedLine (line2, &dashedLineVals[0], 10);
-
-    g.setColour (Colours::gold);
-    g.setOpacity(1.0);
-
-    Path stringPathTop = drawGeometry (g, -1);
-    Path stringPathBottom = drawGeometry (g, 1);
-    g.strokePath (stringPathTop, PathStrokeType(2.0f));
-    g.strokePath (stringPathBottom, PathStrokeType(2.0f));
-    init = false;
-//    }
-    g.setColour (Colours::cyan);
-    Path state = visualiseState (g, (Global::setTubeTo1 ? 10000 : 0.01) * Global::oOPressureMultiplier, true);
-    g.strokePath (state, PathStrokeType (2.0f));
-    g.setColour (Colours::lime);
-    state = visualiseState (g, (Global::setTubeTo1 ? 10000 : 0.01) * Global::oOPressureMultiplier, false);
-    g.strokePath (state, PathStrokeType (2.0f));
-
-    
-//    std::cout << "repainted" << std::endl;
-
-}
-
-Path Tube::drawGeometry (Graphics& g, int topOrBottom)
-{
-    double visualScaling = 5.642 * getHeight();
-    Path stringPath;
-    stringPath.startNewSubPath (0, topOrBottom * radii[0] * visualScaling + getHeight() * 0.5);
-    int stateWidth = getWidth();
-    auto spacing = stateWidth / static_cast<double>(Nint - 1);
-    auto x = spacing;
-    
-    for (int y = 1; y < Nint; y++)
-    {
-        stringPath.lineTo(x, topOrBottom * radii[y] * visualScaling + getHeight() * 0.5);
-        x += spacing;
-    }
-    return stringPath;
-}
-
-Path Tube::visualiseState (Graphics& g, double visualScaling, bool pressure)
-{
-    if (!pressure)
-        visualScaling *= 1000000;
-    auto stringBounds = getHeight() / 2.0;
-    Path stringPath;
-    
-    stringPath.startNewSubPath (0, (pressure ? -up[1][0] : -uv[1][0] * SHalf[0]) * visualScaling + stringBounds);
-
-    int stateWidth = getWidth();
-    auto spacing = stateWidth / static_cast<double>(Nint - (pressure ? 1 : 2));
-    auto x = spacing;
-    bool switchToW = false;
-    
-    for (int y = 1; y <= Nint + (pressure ? 1 : -1); y++)
-    {
-        float newY;
-        if (y <= (pressure ? M : M-1))
-        {
-            newY = (pressure ? -up[1][y] : -uv[1][y] * SHalf[0]) * visualScaling + stringBounds; // Needs to be -p, because a positive p would visually go down
-//            if (y == M-1)
-//            {
-//                std::cout << x;
-//            }
-            //if (isnan(x) || isinf(abs(x) || isnan(pressure ? up[1][y] : uv[1][y]) || isinf(abs(pressure ? up[1][y] : uv[1][y]))))
-            //{
-            //    std::cout << "Wait" << std::endl;
-            //};
-            
-        } else {
-            if (!switchToW)
-            {
-                x -= (pressure ? spacing : 0);
-                x += alf * spacing;
-                switchToW = true;
-            }
-            newY = (pressure ? -wp[1][y-M-1] : -wv[1][y-M] * SHalf[y]) * visualScaling + stringBounds; // Needs to be -p, because a positive p would visually go down
-//            if (y == M)
-//            {
-//                std::cout << ", " << x << std::endl;;
-//            }
-            //if (isnan(x) || isinf(abs(x) || isnan(pressure ? wp[1][y-M-1] : wv[1][y-M]) || isinf(abs(pressure ? wp[1][y-M-1] : wv[1][y-M]))))
-            //{
-            //    std::cout << "Wait" << std::endl;
-            //};
-
-        }
-       
-        
-        if (isnan(newY))
-            newY = 0;
-        stringPath.lineTo (x, newY);
-        //        g.drawEllipse(x, newY, 2, 2, 5);
-        x += spacing;
-    }
-    return stringPath;
-}
-
-void Tube::resized()
-{
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
-}
 
 void Tube::calculateThermodynamicConstants()
 {
@@ -456,14 +331,14 @@ void Tube::calculateGeometry()
             if (idx == 4) // tuning slide
             {
                 S[i] = pow(Global::linspace(geometry[1][idx], geometry[1][idx+1],
-                                        lengthInN[idx], i - curN - 1), 2) * double_Pi;
+                                        lengthInN[idx], i - curN - 1), 2) * M_PI;
             } else if (idx == 5)
             {
                 x = geometry[0][5] - geometry[0][5] * (i - (Nint - lengthInN[5]) - 1) / (lengthInN[5] - 1);
-//                S[Nint-(i - (Nint - lengthInN[5]))] = pow(b * pow(((i - (Nint - lengthInN[5])) / (2.0 * lengthInN[5]) + x0), -flare), 2) * double_Pi;
-                S[i] = pow(b * pow(x + x0, -flare), 2) * double_Pi;
+//                S[Nint-(i - (Nint - lengthInN[5]))] = pow(b * pow(((i - (Nint - lengthInN[5])) / (2.0 * lengthInN[5]) + x0), -flare), 2) * M_PI;
+                S[i] = pow(b * pow(x + x0, -flare), 2) * M_PI;
             } else {
-                S[i] = pow(geometry[1][idx], 2) * double_Pi;
+                S[i] = pow(geometry[1][idx], 2) * M_PI;
                 curN = i;
             }
         }
@@ -476,7 +351,7 @@ void Tube::calculateGeometry()
 //            else if (i >= mpL + m2tL && i < Nint - bellL)
 //                S[i] = tubeS;
 //            else
-//                S[Nint-(i - (Nint - bellL))] = pow(b * pow(((i - (Nint - bellL)) / (2.0 * bellL) + x0), -flare), 2) * double_Pi;
+//                S[Nint-(i - (Nint - bellL))] = pow(b * pow(((i - (Nint - bellL)) / (2.0 * bellL) + x0), -flare), 2) * M_PI;
 //        }
     }
     
@@ -497,7 +372,7 @@ void Tube::calculateRadii()
 {
     radii.resize (Nint+1, 0);
     for (int i = 0; i < Nint+1; ++i)
-        radii[i] = sqrt (S[i] / double_Pi);
+        radii[i] = sqrt (S[i] / M_PI);
     
 }
 double Tube::getKinEnergy()

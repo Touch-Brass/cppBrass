@@ -10,21 +10,17 @@
 
 #pragma once
 
-#include <JuceHeader.h>
 #include "Global.h"
 #include "Tube.h"
 #include "LipModel.h"
 //==============================================================================
 /*
 */
-class Trombone  : public juce::Component
+class Trombone
 {
 public:
     Trombone (NamedValueSet& parameters, double k, std::vector<std::vector<double>>& geometry);
-    ~Trombone() override;
-
-    void paint (juce::Graphics&) override;
-    void resized() override;
+    ~Trombone();
 
     void calculate();
     void calculateEnergy();
@@ -70,5 +66,4 @@ private:
         maxMSave, maxMwSave, Ssave, output;
     
     bool shouldWait = false; // wait with changing L?
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Trombone)
 };

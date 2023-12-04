@@ -8,17 +8,18 @@
 
 #pragma once
 
-#include <JuceHeader.h>
 #include "Global.h"
 #include "Trombone.h"
 #include "LowPass.h"
+
+#include <memory>
 
 //==============================================================================
 /*
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent   : public AudioAppComponent, public Timer, public Slider::Listener
+class MainComponent
 {
 public:
     //==============================================================================
@@ -26,21 +27,9 @@ public:
     ~MainComponent();
 
     //==============================================================================
-    void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override;
-    void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override;
-    void releaseResources() override;
-
-    //==============================================================================
-    void paint (Graphics& g) override;
-    void resized() override;
-
-    void timerCallback() override;
-
-    void mouseDown (const MouseEvent& e) override;
-    void mouseDrag (const MouseEvent& e) override;
-    void mouseUp (const MouseEvent& e) override;
-    
-    void sliderValueChanged (Slider* slider) override;
+    void prepareToPlay (int samplesPerBlockExpected, double sampleRate);
+    void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill);
+    void releaseResources();
 
 private:
 
@@ -65,6 +54,4 @@ private:
     Rectangle<int> bottomBar;
     bool init = true;
     double pressureValSave = 0;
-        
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

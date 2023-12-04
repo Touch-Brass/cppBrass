@@ -10,27 +10,20 @@
 
 #pragma once
 
-#include <JuceHeader.h>
 
-//==============================================================================
-/*
-*/
-class LowPass  : public juce::Component
+#include <vector>
+
+class LowPass
 {
 public:
     LowPass (std::vector<double> bCoeffs, std::vector<double> aCoeffs);
-    ~LowPass() override;
-
-    void paint (juce::Graphics&) override;
-    void resized() override;
+    ~LowPass();
 
     float filter (float input);
     void toggleOnOff() { active = !active; };
     
     bool isOn() { return active; };
 private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LowPass)
-    
     std::vector<double> b;
     std::vector<double> a;
     

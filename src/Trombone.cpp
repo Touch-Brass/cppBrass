@@ -8,8 +8,10 @@
   ==============================================================================
 */
 
-#include <JuceHeader.h>
 #include "Trombone.h"
+
+#include <memory>
+#include <cmath>
 
 //==============================================================================
 Trombone::Trombone (NamedValueSet& parameters, double k, std::vector<std::vector<double>>& geometry) : k (k),
@@ -55,27 +57,6 @@ Pm (*parameters.getVarPointer ("Pm"))
 Trombone::~Trombone()
 {
     closeFiles();
-}
-
-void Trombone::paint (juce::Graphics& g)
-{
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
-
-       You should replace everything in this method with your own
-       drawing code..
-    */
-}
-
-void Trombone::resized()
-{
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-//    Rectangle<int> totArea = getLocalBounds();
-//    tube->setBounds (totArea.removeFromTop(getHeight));
-//    lipModel->setBounds (totArea);
-    tube->setBounds (getLocalBounds());
-
 }
 
 void Trombone::calculate()

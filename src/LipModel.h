@@ -10,20 +10,13 @@
 
 #pragma once
 
-#include <JuceHeader.h>
 #include "Global.h"
 
-//==============================================================================
-/*
-*/
-class LipModel  : public juce::Component
+class LipModel
 {
 public:
     LipModel (NamedValueSet& parameters, double k);
-    ~LipModel() override;
-
-    void paint (juce::Graphics&) override;
-    void resized() override;
+    ~LipModel();
 
     void setTubeParameters (double hIn, double rho, double c, double SBar0In, double SHalf0In);
     void setTubeStates (double p, double vNext) { p0 = p; vNext0 = vNext; };
@@ -79,5 +72,4 @@ private:
     double lipFreqVal;
 
     bool divisBy0Flag = false;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LipModel)
 };
