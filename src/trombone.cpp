@@ -61,17 +61,17 @@ Trombone::~Trombone()
 
 void Trombone::calculate()
 {
-    if (!Global::fixedNonInterpolatedL && !shouldWait)
+    if (!global::fixedNonInterpolatedL && !shouldWait)
         tube->updateL();
     if (shouldLowPassConnection)
         tube->lowPassConnection();
     
-    if (Global::bowing)
+    if (global::bowing)
         tube->calculateVRel();
     
     tube->calculateVelocity();
     
-    if (Global::connectedToLip)
+    if (global::connectedToLip)
     {   lipModel->setTubeStates (tube->getP (1, 0), tube->getV (0, 0));
         lipModel->calculateCollision();
         lipModel->calculateDeltaP();
@@ -85,13 +85,13 @@ void Trombone::calculate()
     if (shouldDispCorr)
         tube->dispCorr();
 
-    if (Global::fixedNonInterpolatedL)
+    if (global::fixedNonInterpolatedL)
         calculateEnergy();
 }
 
 void Trombone::calculateEnergy()
 {
-    bool excludeLip = !Global::connectedToLip;
+    bool excludeLip = !global::connectedToLip;
 //    bool excludeLip = false;
 
     double kinEnergy = tube->getKinEnergy();
@@ -129,7 +129,7 @@ void Trombone::updateStates()
 
 void Trombone::saveToFiles()
 {
-    if (!Global::onlyWriteOutput)
+    if (!global::onlyWriteOutput)
     {
         massState << getLipOutput() << ";\n";
         

@@ -25,7 +25,7 @@ LipModel::LipModel (NamedValueSet& parameters, double k) : k (k),
                                             Pm (*parameters.getVarPointer ("Pm"))
 
 {
-    if (Global::connectedToLip)
+    if (global::connectedToLip)
     {
         Sr  = *parameters.getVarPointer ("Sr");
         w = *parameters.getVarPointer ("w");
@@ -36,7 +36,7 @@ LipModel::LipModel (NamedValueSet& parameters, double k) : k (k),
         yPrev = 0;
     }
     
-    if (Global::exciteFromStart)
+    if (global::exciteFromStart)
     {
         yPrev = H0;
         pressureVal = Pm;
@@ -90,7 +90,7 @@ void LipModel::calculateCollision()
     kappa = psiPrev < 0 ? -1 : 1;
     if (eta >= 0)
     {
-        g = kappa * sqrt(Kcol * (alpha+1) / 2) * pow(Global::subplus (eta), (alpha - 1.0) / 2.0);
+        g = kappa * sqrt(Kcol * (alpha+1) / 2) * pow(global::subplus (eta), (alpha - 1.0) / 2.0);
     } else {
         if(etaNext - etaPrev != 0)
         {
@@ -115,12 +115,12 @@ void LipModel::calculateDeltaP()
     a3 = 2.0 * oOk * oOk * (y - yPrev) - omega0Sq * yPrev + g * oOM * psiPrev;
     b1 = SHalf0 * vNext0 + bCoeff * (Pm  - p0);
     b2 = bCoeff;
-    c1 = c1Coeff * Global::subplus (y + H0);
+    c1 = c1Coeff * global::subplus (y + H0);
     c2 = b2 + a2 * Sr * oOa1;
     c3 = b1 - a3 * Sr * oOa1;
     
     deltaPTerm = (-c1 + sqrt(c1 * c1 + 4.0 * c2 * abs (c3))) / (2.0 * c2);
-    deltaP = Global::sgn(c3) * deltaPTerm * deltaPTerm;
+    deltaP = global::sgn(c3) * deltaPTerm * deltaPTerm;
     
 }
 void LipModel::calculate()
@@ -138,7 +138,7 @@ void LipModel::calculate()
     
     
     //// Flow Velocities ////
-    Ub = c1 * Global::sgn (deltaP) * sqrt (abs (deltaP));
+    Ub = c1 * global::sgn (deltaP) * sqrt (abs (deltaP));
     Ur = Sr * oO2k * (yNext - yPrev);
 
 }

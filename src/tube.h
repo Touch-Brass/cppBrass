@@ -112,7 +112,7 @@ public:
     double getPotEnergy1() { return potEnergy1; };
     double getRadEnergy1() { return radEnergy1; };
 
-    void setExtVals (double LVal) { LtoGoTo = Global::limit (LVal, Global::LnonExtended, Global::Lextended); };
+    void setExtVals (double LVal) { LtoGoTo = global::limit (LVal, global::LnonExtended, global::Lextended); };
     void updateL();
     
     void lowPassConnection();

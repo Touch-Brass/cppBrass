@@ -18,7 +18,7 @@ MainComponent::MainComponent()
     
     // specify the number of input and output channels that we want to open
     
-    setAudioChannels (Global::useMicInput ? 2 : 0, 2);
+    setAudioChannels (global::useMicInput ? 2 : 0, 2);
     startTimerHz (15);
     
 }
@@ -42,9 +42,9 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
     
     //// Tube ////
     parameters.set ("T", 26.85);
-    parameters.set ("LnonExtended", Global::LnonExtended);
-    parameters.set ("Lextended", Global::Lextended);
-    parameters.set ("L", Global::LnonExtended);
+    parameters.set ("LnonExtended", global::LnonExtended);
+    parameters.set ("Lextended", global::Lextended);
+    parameters.set ("L", global::LnonExtended);
 //    parameters.set ("L", 3.653);
 
 
@@ -83,7 +83,7 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
     parameters.set ("alphaCol", 3);
     
     //// Input ////
-    parameters.set ("Pm", (Global::exciteFromStart ? 300 : 0) * Global::pressureMultiplier);
+    parameters.set ("Pm", (global::exciteFromStart ? 300 : 0) * global::pressureMultiplier);
 //    LVal = (*parameters.getVarPointer ("Lextended"));
     trombone = std::make_unique<Trombone> (parameters, 1.0 / fs, geometry);
     addAndMakeVisible (trombone.get());
@@ -96,10 +96,10 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
     
     lowPass = std::make_unique<LowPass> (std::vector<double> { 0.0001343, 0.0005374, 0.0008060, 0.0005374, 0.0001343 },
                                           std::vector<double> {1, -3.3964, 4.3648, -2.5119, 0.5456 });
-    if (~Global::useMicInput)
+    if (~global::useMicInput)
     {
         pressureSlider.setRange (0, 6000);
-        pressureSlider.setValue (300 * Global::pressureMultiplier);
+        pressureSlider.setValue (300 * global::pressureMultiplier);
         addAndMakeVisible (pressureSlider);
         pressureSlider.addListener (this);
         pressureSlider.setTextBoxStyle (Slider::NoTextBox, true, 0, 0);
@@ -122,7 +122,7 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
     
     float output = 0.0;
 
-   if (Global::useMicInput)
+   if (global::useMicInput)
    {
        const float* input = bufferToFill.buffer->getReadPointer (0, bufferToFill.startSample);
        double avg = 0;
@@ -138,10 +138,10 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
     for (int i = 0; i < bufferToFill.numSamples; ++i)
     {
         trombone->calculate();
-        output = trombone->getOutput() * 0.001 * Global::oOPressureMultiplier;
+        output = trombone->getOutput() * 0.001 * global::oOPressureMultiplier;
         output = lowPass->filter (output);
 
-//        if (!done && Global::saveToFiles && t >= Global::startSample)
+//        if (!done && global::saveToFiles && t >= global::startSample)
 //        {
 //            trombone->saveToFiles();
 //        }
@@ -149,10 +149,10 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
         
 
         trombone->updateStates();
-        channelData1[i] = Global::outputClamp (output);
-        channelData2[i] = Global::outputClamp (output);
+        channelData1[i] = global::outputClamp (output);
+        channelData2[i] = global::outputClamp (output);
     }
-    if (Global::saveToFiles && t >= Global::stopSample && !done)
+    if (global::saveToFiles && t >= global::stopSample && !done)
     {
         done = true;
         trombone->closeFiles();

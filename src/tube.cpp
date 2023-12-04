@@ -22,7 +22,7 @@ Tube::Tube (NamedValueSet& parameters, double k, std::vector<std::vector<double>
     NnonExtended = floor (LnonExtended / h);
     Nextended = floor (static_cast<double>(*parameters.getVarPointer("Lextended")) / h);
     N = L / h;
-    if (Global::fixedNonInterpolatedL)
+    if (global::fixedNonInterpolatedL)
     {
         L = floor(N) * h;
         N = L / h;
@@ -46,7 +46,7 @@ Tube::Tube (NamedValueSet& parameters, double k, std::vector<std::vector<double>
 
     calculateRadii();
 
-    lambda = Global::lambdaFact * c * k / h;
+    lambda = global::lambdaFact * c * k / h;
     lambdaOverRhoC = lambda / (rho * c);
     
     // initialise state vectors
@@ -75,7 +75,7 @@ Tube::Tube (NamedValueSet& parameters, double k, std::vector<std::vector<double>
    
 
     
-    if (raisedCos)// || !Global::connectedToLip)
+    if (raisedCos)// || !global::connectedToLip)
     {
         //        int start = N * 0.25 - 5;
         //        int end = N * 0.25 + 5;
@@ -151,7 +151,7 @@ Tube::Tube (NamedValueSet& parameters, double k, std::vector<std::vector<double>
     uvMmhPrev = 0;
     wvhPrev = 0;
     
-    if (Global::bowing)
+    if (global::bowing)
     {
         // Simple (exponential) Bow Model
         a = 100; // Free parameter
@@ -203,7 +203,7 @@ void Tube::calculateVelocity()
     uvNextMph = uvMph - lambda / (rho * c) * (upMp1 - up[1][M]);
     wvNextmh = wvmh - lambda / (rho * c) * (wp[1][0] - wpm1);
     
-    if (Global::bowing)
+    if (global::bowing)
         uv[0][0] = uv[0][0] - k / h * BM * Fb * vrel * exp (-a * vrel * vrel);
 //    if (wvNextmh != 0)
 //        DBG("wait");
@@ -227,7 +227,7 @@ void Tube::calculatePressure()
     // excitation
     up[0][0] = up[1][0] - rho * c * lambda * oOSBar[0] * (-2.0 * (Ub + Ur) + 2.0 * SHalf[0] * uv[0][0]);
     
-//    if (Global::bowing)
+//    if (global::bowing)
 //        up[0][0] = up[0][0] - bowExcitation;
 //    std::cout << up[0][M-1] - wp[0][0] << std::endl;
 }
@@ -309,7 +309,7 @@ void Tube::calculateGeometry()
     
     double x = 0;
 
-    if (Global::setTubeTo1)
+    if (global::setTubeTo1)
     {
         for (int i = 0; i <= Nint; ++i)
         {
@@ -330,7 +330,7 @@ void Tube::calculateGeometry()
             }
             if (idx == 4) // tuning slide
             {
-                S[i] = pow(Global::linspace(geometry[1][idx], geometry[1][idx+1],
+                S[i] = pow(global::linspace(geometry[1][idx], geometry[1][idx+1],
                                         lengthInN[idx], i - curN - 1), 2) * M_PI;
             } else if (idx == 5)
             {
@@ -347,7 +347,7 @@ void Tube::calculateGeometry()
 //            if (i < mpL)
 //                S[i] = mp;
 //            else if (i >= mpL && i < mpL + m2tL)
-//                S[i] = Global::linspace (mp, tubeS, m2tL, i-mpL);
+//                S[i] = global::linspace (mp, tubeS, m2tL, i-mpL);
 //            else if (i >= mpL + m2tL && i < Nint - bellL)
 //                S[i] = tubeS;
 //            else
@@ -600,7 +600,7 @@ void Tube::dispCorr()
     up[0][M] += k*k/h * F;
     wp[0][0] -= k*k/h * F;
     
-    if (Global::correctV)
+    if (global::correctV)
     {
         double etaDiv = 0.5;
         double etaPrevV1 = (wvhPrev - uvMphPrev) * etaDiv;
@@ -626,7 +626,7 @@ void Tube::updateL()
 {
     Lprev = L;
     NintPrev = Nint;
-    double Ndiff = 1.0 / Global::Nmaxdiff;
+    double Ndiff = 1.0 / global::Nmaxdiff;
     
     double Linc = Ndiff * h;
     //    L = (1-LfilterCoeff) * LtoGoTo + LfilterCoeff * Lprev;

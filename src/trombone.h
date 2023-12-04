@@ -60,7 +60,7 @@ private:
     double scaledTotEnergy = 0;
     
     bool shouldLowPassConnection = false;
-    bool shouldDispCorr = Global::useDispCorr;
+    bool shouldDispCorr = global::useDispCorr;
 
     std::ofstream massState, pState, vState, MSave, MwSave, alfSave, energySave, scaledTotEnergySave,
         maxMSave, maxMwSave, Ssave, output;
