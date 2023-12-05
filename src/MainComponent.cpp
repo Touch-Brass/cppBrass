@@ -130,11 +130,12 @@ void MainComponent::startPlaying(){
 
     float i = 0;
     while(true){
-        i += 0.1;
-        if(i > 1) i = 0;
-        LVal = global::LnonExtended + ((global::Lextended - global::LnonExtended) * i);
-        // lipFreqVal = 2.4 * trombone->getTubeC() / (trombone->getTubeRho() * LVal);
-        Pa_Sleep(1000);
+        i += 1;
+        // if(i > 1) i = 0;
+        // LVal = global::LnonExtended + ((global::Lextended - global::LnonExtended) * i);
+        // lipFreqVal = (2.4 + i) * trombone->getTubeC() / (trombone->getTubeRho() * LVal);
+        lipFreqVal = 273;
+        Pa_Sleep(100);
     }
 }
 
