@@ -23,7 +23,7 @@ namespace global
     static bool setTubeTo1 = false;
     static bool connectedToLip = true;
     static bool fixedNonInterpolatedL = false;
-    static bool exciteFromStart = false;
+    static bool exciteFromStart = true;
     static bool saveToFiles = false;
     static bool onlyWriteOutput = false;
     static int startSample = 0;
@@ -33,7 +33,7 @@ namespace global
 
     static bool bowing = false; // experimental stuff
 
-    static bool useMicInput = true;
+    static bool useMicInput = false;
 
     static double lambdaFact = 0.999;
     static double Nmaxdiff = 20.0;
@@ -43,15 +43,15 @@ namespace global
     static double LnonExtended = 2.593;
     static double Lextended = 3.653;
 
-    static std::vector<double> linspace(double start, double finish, int N);
-    static double linspace(double start, double finish, int N, int idx);
+    std::vector<double> linspace(double start, double finish, int N);
+    double linspace(double start, double finish, int N, int idx);
 
-    static inline double subplus(double val);
+    inline double subplus(double val) { return (val + abs(val)) * 0.5; };
 
-    static inline int sgn(double val);
+    inline int sgn(double val) { return (0 < val) - (val < 0); };
 
-    static double limit(double val, double min, double max);
+    double limit(double val, double min, double max);
 
-    static double outputClamp(double val);
+    double outputClamp(double val);
 
 }

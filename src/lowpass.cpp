@@ -39,6 +39,10 @@ LowPass::LowPass(std::vector<double> bCoeffs, std::vector<double> aCoeffs)
     }
 }
 
+LowPass::~LowPass(){
+    
+}
+
 float LowPass::filter(float input)
 {
     if (!active)

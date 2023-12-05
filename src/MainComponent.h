@@ -14,6 +14,8 @@
 
 #include <memory>
 
+#include <portaudio.h>
+
 //==============================================================================
 /*
     This component lives inside our window, and this is where you should put all
@@ -27,11 +29,12 @@ public:
     ~MainComponent();
 
     //==============================================================================
-    void prepareToPlay(int samplesPerBlockExpected, double sampleRate);
-    void getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill);
-    void releaseResources();
+    void prepareToPlay(double sampleRate);
+    void startPlaying();
+    static int computeAndOutput(const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData);
 
 private:
+    PaStream* stream;
     // Your private member variables go here...
     std::unique_ptr<Trombone> trombone;
     double fs;
@@ -41,16 +44,16 @@ private:
     double pressureVal, lipFreqVal, LVal;
     int controlHeight, controlY;
 
-    bool record = true;
-    double mouseLocX = 0;
-    double mouseLocY = 0;
-    bool mouseEllipseVisible = false;
+    // bool record = true;
+    // double mouseLocX = 0;
+    // double mouseLocY = 0;
+    // bool mouseEllipseVisible = false;
 
     std::unique_ptr<LowPass> lowPass;
 
-    Slider pressureSlider;
-    Rectangle<int> sliderBounds{0, 0, 100, 40};
-    Rectangle<int> bottomBar;
+    // Slider pressureSlider;
+    // Rectangle<int> sliderBounds{0, 0, 100, 40};
+    // Rectangle<int> bottomBar;
     bool init = true;
     double pressureValSave = 0;
 };

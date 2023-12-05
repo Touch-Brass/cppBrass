@@ -11,6 +11,14 @@
 #include "model_params.h"
 
 #include <cmath>
+#include <functional>
+
+#include <portaudio.h>
+
+#define SAMPLE_RATE 44100
+#define FRAMES_PER_BUFFER 64
+
+using namespace std::placeholders;
 
 //==============================================================================
 MainComponent::MainComponent()
@@ -20,19 +28,28 @@ MainComponent::MainComponent()
 
     // specify the number of input and output channels that we want to open
 
-    setAudioChannels(global::useMicInput ? 2 : 0, 2);
-    startTimerHz(15);
+    // setAudioChannels(global::useMicInput ? 2 : 0, 2);
+    // startTimerHz(15);
+
+    Pa_Initialize();
+    // Pa_OpenDefaultStream(&stream, 0, 1, paFloat32, SAMPLE_RATE, FRAMES_PER_BUFFER, computeAndOutput, this);
+    // Pa_StartStream(stream);
+
+    // Pa_Sleep(5000);  // Play for 5 seconds
 }
 
 MainComponent::~MainComponent()
 {
-    // This shuts down the audio device and clears the audio source.
-    stopTimer();
-    shutdownAudio();
+    // // This shuts down the audio device and clears the audio source.
+    // stopTimer();
+    // shutdownAudio();
+    Pa_StopStream(stream);
+    Pa_CloseStream(stream);
+    Pa_Terminate();
 }
 
 //==============================================================================
-void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
+void MainComponent::prepareToPlay(double sampleRate)
 {
 
     if (sampleRate != 44100)
@@ -98,72 +115,50 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
                                         std::vector<double>{1, -3.3964, 4.3648, -2.5119, 0.5456});
     if (~global::useMicInput)
     {
-        pressureSlider.setRange(0, 6000);
-        pressureSlider.setValue(300 * global::pressureMultiplier);
+        // pressureSlider.setRange(0, 6000);
+        // pressureSlider.setValue(300 * global::pressureMultiplier);
         // addAndMakeVisible(pressureSlider); THIS MIGHT BE JUCE CODE
-        pressureSlider.addListener(this);
-        pressureSlider.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+        // pressureSlider.addListener(this); THIS MIGHT BE JUCE CODE
+        // pressureSlider.setTextBoxStyle(Slider::NoTextBox, true, 0, 0); THIS MIGHT BE JUCE CODE
     }
     // setSize(800, 600); THIS MIGHT BE JUCE CODE
 }
 
-void MainComponent::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)
-{
-    // Your audio-processing code goes here!
+void MainComponent::startPlaying(){
+    Pa_OpenDefaultStream(&stream, 0, 1, paFloat32, SAMPLE_RATE, FRAMES_PER_BUFFER, computeAndOutput, this);
+    Pa_StartStream(stream);
 
-    // For more details, see the help for AudioProcessor::getNextAudioBlock()
-
-    // Right now we are not producing any data, in which case we need to clear the buffer
-    // (to prevent the output of random noise)
-
-    float *const channelData1 = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);
-    float *const channelData2 = bufferToFill.buffer->getWritePointer(1, bufferToFill.startSample);
-
-    float output = 0.0;
-
-    if (global::useMicInput)
-    {
-        const float *input = bufferToFill.buffer->getReadPointer(0, bufferToFill.startSample);
-        double avg = 0;
-        for (int i = 0; i < bufferToFill.numSamples; ++i)
-            avg += input[i] * input[i];
-        avg /= bufferToFill.numSamples;
-        avg = sqrt(avg);
-
-        pressureVal = 10000 * avg;
-        trombone->setExtVals(10000 * avg, lipFreqVal, LVal);
+    float i = 0;
+    while(true){
+        i += 0.1;
+        if(i > 1) i = 0;
+        LVal = global::LnonExtended + ((global::Lextended - global::LnonExtended) * i);
+        // lipFreqVal = 2.4 * trombone->getTubeC() / (trombone->getTubeRho() * LVal);
+        Pa_Sleep(1000);
     }
-
-    for (int i = 0; i < bufferToFill.numSamples; ++i)
-    {
-        trombone->calculate();
-        output = trombone->getOutput() * 0.001 * global::oOPressureMultiplier;
-        output = lowPass->filter(output);
-
-        //        if (!done && global::saveToFiles && t >= global::startSample)
-        //        {
-        //            trombone->saveToFiles();
-        //        }
-        ++t;
-
-        trombone->updateStates();
-        channelData1[i] = global::outputClamp(output);
-        channelData2[i] = global::outputClamp(output);
-    }
-    if (global::saveToFiles && t >= global::stopSample && !done)
-    {
-        done = true;
-        trombone->closeFiles();
-        std::cout << "done" << std::endl;
-    }
-    trombone->refreshLipModelInputParams();
-    //    std::cout << output << std::endl;
 }
 
-void MainComponent::releaseResources()
-{
-    // This will be called when the audio device stops, or when it is being
-    // restarted due to a setting change.
+int MainComponent::computeAndOutput(const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData) {
+    MainComponent* cmp = (MainComponent*) userData;
 
-    // For more details, see the help for AudioProcessor::releaseResources()
+    cmp->trombone->setExtVals(1000, cmp->lipFreqVal, cmp->LVal);
+    cmp->trombone->refreshLipModelInputParams();
+
+    float *out = (float*)output;
+
+    float sample_out = 0.0;
+
+    for (int i = 0; i < FRAMES_PER_BUFFER; i++)
+    {
+        cmp->trombone->calculate();
+        sample_out = cmp->trombone->getOutput() * 0.001 * global::oOPressureMultiplier;
+        sample_out = cmp->lowPass->filter(sample_out);
+
+        cmp->trombone->updateStates();
+        out[i] = (float) global::outputClamp(sample_out);
+    }
+
+    // cmp->trombone->refreshLipModelInputParams();
+
+    return paContinue;
 }

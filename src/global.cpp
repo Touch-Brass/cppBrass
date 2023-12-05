@@ -2,7 +2,7 @@
 
 namespace global
 {
-    static std::vector<double> linspace(double start, double finish, int N)
+    std::vector<double> linspace(double start, double finish, int N)
     {
         std::vector<double> res(N, 0);
         for (int i = 0; i < N; ++i)
@@ -12,7 +12,7 @@ namespace global
         return res;
     }
 
-    static double linspace(double start, double finish, int N, int idx)
+    double linspace(double start, double finish, int N, int idx)
     {
         if (idx >= N)
         {
@@ -22,11 +22,7 @@ namespace global
         return start + idx * (finish - start) / static_cast<double>(N - 1);
     }
 
-    static inline double subplus(double val) { return (val + abs(val)) * 0.5; };
-
-    static inline int sgn(double val) { return (0 < val) - (val < 0); };
-
-    static double limit(double val, double min, double max)
+    double limit(double val, double min, double max)
     {
         if (val < min)
         {
@@ -41,7 +37,7 @@ namespace global
         return val;
     }
 
-    static double outputClamp(double val)
+    double outputClamp(double val)
     {
         return limit(val, -1.0, 1.0);
     }
