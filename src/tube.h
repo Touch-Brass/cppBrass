@@ -11,16 +11,14 @@
 #pragma once
 
 #include "global.h"
+#include "model_params.h"
 
 #include <vector>
 
-//==============================================================================
-/*
- */
 class Tube
 {
 public:
-    Tube(NamedValueSet &parameters, double k, std::vector<std::vector<double>> &geometry);
+    Tube(ModelParams* params, double k, std::vector<std::vector<double>> &geometry);
     ~Tube();
 
     void calculateThermodynamicConstants();

@@ -13,13 +13,14 @@
 #include "global.h"
 #include "tube.h"
 #include "lipmodel.h"
-//==============================================================================
-/*
- */
+#include "model_params.h"
+
+#include <memory>
+
 class Trombone
 {
 public:
-    Trombone(NamedValueSet &parameters, double k, std::vector<std::vector<double>> &geometry);
+    Trombone(ModelParams* params, double k, std::vector<std::vector<double>> &geometry);
     ~Trombone();
 
     void calculate();
@@ -51,7 +52,7 @@ public:
 
     void setWait(bool w) { shouldWait = w; };
 
-    double getBellRad() { tube->getBellRad(); };
+    double getBellRad() { return tube->getBellRad(); };
 
 private:
     std::unique_ptr<Tube> tube;

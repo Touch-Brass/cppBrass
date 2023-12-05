@@ -8,6 +8,8 @@
 
 #include "MainComponent.h"
 
+#include "model_params.h"
+
 #include <cmath>
 
 //==============================================================================
@@ -37,13 +39,13 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
         std::cout << "sampleRate is not 44100 Hz!!" << std::endl;
 
     fs = sampleRate;
-    NamedValueSet parameters;
+    ModelParams* params = new ModelParams();
 
     //// Tube ////
-    parameters.set("T", 26.85);
-    parameters.set("LnonExtended", global::LnonExtended);
-    parameters.set("Lextended", global::Lextended);
-    parameters.set("L", global::LnonExtended);
+    params->T = 26.85;
+    params->LnonExtended = global::LnonExtended;
+    params->Lextended = global::Lextended;
+    params->L = global::LnonExtended;
     //    parameters.set ("L", 3.653);
 
     // Geometry
@@ -58,36 +60,36 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
         {0.0069, 0.0072, 0.0069, 0.0071, 0.0075, 0.0107} // radii
     };
 
-    parameters.set("flare", 0.7);  // flare (exponent coeff)
-    parameters.set("x0", 0.0174);  // position of bell mouth (exponent coeff)
-    parameters.set("b", 0.0063);   // fitting parameter
-    parameters.set("bellL", 0.21); // bell (length ratio)
+    params->flare = 0.7;
+    params->x0 = 0.0174;
+    params->b = 0.0063;
+    params->bellL = 0.21;
 
     //// Lip ////
     double f0 = 300;
     double H0 = 2.9e-4;
-    parameters.set("f0", f0);                  // fundamental freq lips
-    parameters.set("Mr", 5.37e-5);             // mass lips
-    parameters.set("omega0", 2.0 * M_PI * f0); // angular freq
+    params->f0 = f0;            // fundamental freq lips
+    params->Mr = 5.37e-5;            // mass lips
+    params->omega0 = 2.0 * M_PI * f0; // angular freq
 
-    parameters.set("sigmaR", 5);    // damping
-    parameters.set("H0", H0);       // equilibrium
-    parameters.set("barrier", -H0); // equilibrium
+    params->sigmaR = 5;    // damping
+    params->H0 = H0;       // equilibrium
+    params->barrier = -H0; // equilibrium
 
-    parameters.set("w", 1e-2);     // lip width
-    parameters.set("Sr", 1.46e-5); // lip area
+    params->w = 1e-2;     // lip width
+    params->Sr = 1.46e-5; // lip area
 
-    parameters.set("Kcol", 10000);
-    parameters.set("alphaCol", 3);
+    params->Kcol = 10000;
+    params->alphaCol = 3;
 
     //// Input ////
-    parameters.set("Pm", (global::exciteFromStart ? 300 : 0) * global::pressureMultiplier);
+    params->Pm = (global::exciteFromStart ? 300 : 0) * global::pressureMultiplier;
     //    LVal = (*parameters.getVarPointer ("Lextended"));
-    trombone = std::make_unique<Trombone>(parameters, 1.0 / fs, geometry);
-    addAndMakeVisible(trombone.get());
+    trombone = std::make_unique<Trombone>(params, 1.0 / fs, geometry);
+    // addAndMakeVisible(trombone.get()); THIS MIGHT BE JUCE CODE
 
     pressureVal = 0;
-    LVal = (*parameters.getVarPointer("LnonExtended")); // start by contracting
+    LVal = params->LnonExtended; // start by contracting
     lipFreqVal = 2.4 * trombone->getTubeC() / (trombone->getTubeRho() * LVal);
 
     trombone->setExtVals(pressureVal, lipFreqVal, LVal, true);
@@ -98,11 +100,11 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
     {
         pressureSlider.setRange(0, 6000);
         pressureSlider.setValue(300 * global::pressureMultiplier);
-        addAndMakeVisible(pressureSlider);
+        // addAndMakeVisible(pressureSlider); THIS MIGHT BE JUCE CODE
         pressureSlider.addListener(this);
         pressureSlider.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
     }
-    setSize(800, 600);
+    // setSize(800, 600); THIS MIGHT BE JUCE CODE
 }
 
 void MainComponent::getNextAudioBlock(const AudioSourceChannelInfo &bufferToFill)

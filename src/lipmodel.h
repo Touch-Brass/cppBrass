@@ -11,11 +11,12 @@
 #pragma once
 
 #include "global.h"
+#include "model_params.h"
 
 class LipModel
 {
 public:
-    LipModel(NamedValueSet &parameters, double k);
+    LipModel(ModelParams* parameters, double k);
     ~LipModel();
 
     void setTubeParameters(double hIn, double rho, double c, double SBar0In, double SHalf0In);

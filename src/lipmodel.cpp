@@ -13,22 +13,22 @@
 #include <cmath>
 
 //==============================================================================
-LipModel::LipModel(NamedValueSet &parameters, double k) : k(k),
-                                                          lipFreqVal(*parameters.getVarPointer("f0")),
-                                                          omega0(*parameters.getVarPointer("omega0")),
-                                                          M(*parameters.getVarPointer("Mr")),
-                                                          sig(*parameters.getVarPointer("sigmaR")),
-                                                          Kcol(*parameters.getVarPointer("Kcol")),
-                                                          alpha(*parameters.getVarPointer("alphaCol")),
-                                                          H0(*parameters.getVarPointer("H0")),
-                                                          b(*parameters.getVarPointer("barrier")),
-                                                          Pm(*parameters.getVarPointer("Pm"))
+LipModel::LipModel(ModelParams* params, double k) : k(k),
+                                                    lipFreqVal(params->f0),
+                                                    omega0(params->omega0),
+                                                    M(params->Mr),
+                                                    sig(params->sigmaR),
+                                                    Kcol(params->Kcol),
+                                                    alpha(params->alphaCol),
+                                                    H0(params->H0),
+                                                    b(params->barrier),
+                                                    Pm(params->Pm)
 
 {
     if (global::connectedToLip)
     {
-        Sr = *parameters.getVarPointer("Sr");
-        w = *parameters.getVarPointer("w");
+        Sr = params->Sr;
+        w = params->w;
         yPrev = H0;
     }
     else
@@ -105,7 +105,7 @@ void LipModel::calculateCollision()
         {
             if (!divisBy0Flag)
             {
-                DBG("DIVISION BY 0");
+                std::cout << "DIVISION BY 0" << std::endl;
                 divisBy0Flag = true;
             }
         }

@@ -9,18 +9,21 @@
 */
 
 #include "tube.h"
+#include "model_params.h"
 
 #include <cmath>
 
-//==============================================================================
-Tube::Tube(NamedValueSet &parameters, double k, std::vector<std::vector<double>> &geometry) : k(k), L(*parameters.getVarPointer("L")), T(*parameters.getVarPointer("T")), geometry(geometry)
+Tube::Tube(ModelParams *params, double k, std::vector<std::vector<double>> &geometry) : k(k),
+                                                                                        L(params->L),
+                                                                                        T(params->T),
+                                                                                        geometry(geometry)
 {
     calculateThermodynamicConstants();
 
     h = c * k;
-    double LnonExtended = static_cast<double>(*parameters.getVarPointer("LnonExtended"));
+    double LnonExtended = static_cast<double>(params->LnonExtended);
     NnonExtended = floor(LnonExtended / h);
-    Nextended = floor(static_cast<double>(*parameters.getVarPointer("Lextended")) / h);
+    Nextended = floor(static_cast<double>(params->Lextended / h));
     N = L / h;
     if (global::fixedNonInterpolatedL)
     {
@@ -36,9 +39,9 @@ Tube::Tube(NamedValueSet &parameters, double k, std::vector<std::vector<double>>
     alf = N - Nint;
     //    h = L / Nint;
 
-    flare = *parameters.getVarPointer("flare");
-    x0 = *parameters.getVarPointer("x0");
-    b = *parameters.getVarPointer("b");
+    flare = params->flare;
+    x0 = params->x0;
+    b = params->b;
 
     M = ceil(round((geometry[0][0] + geometry[0][1] * 0.5) * NnonExtended / LnonExtended) + (Nint + 1 - NnonExtended) * 0.5);
     calculateGeometry();

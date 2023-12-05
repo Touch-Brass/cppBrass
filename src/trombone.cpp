@@ -14,21 +14,21 @@
 #include <cmath>
 
 //==============================================================================
-Trombone::Trombone(NamedValueSet &parameters, double k, std::vector<std::vector<double>> &geometry) : k(k),
-                                                                                                      Pm(*parameters.getVarPointer("Pm"))
+Trombone::Trombone(ModelParams* params, double k, std::vector<std::vector<double>> &geometry) : k(k),
+                                                                                                Pm(params->Pm)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
-    tube = std::make_unique<Tube>(parameters, k, geometry);
-    addAndMakeVisible(tube.get());
-    lipModel = std::make_unique<LipModel>(parameters, k);
+    tube = std::make_unique<Tube>(params, k, geometry);
+    // addAndMakeVisible(tube.get()); THIS MIGHT BE JUCE CODE
+    lipModel = std::make_unique<LipModel>(params, k);
     lipModel->setTubeParameters(tube->getH(),
                                 tube->getRho(),
                                 tube->getC(),
                                 tube->getSBar(0),
                                 tube->getSHalf(0));
-    addAndMakeVisible(lipModel.get());
+    // addAndMakeVisible(lipModel.get()); THIS MIGHT BE JUCE CODE
 
     massState.open("massState.csv");
     pState.open("pState.csv");
