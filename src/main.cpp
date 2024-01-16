@@ -5,9 +5,9 @@
 
 int main() {
 
-    MainComponent mc = MainComponent();
-    mc.prepareToPlay(44100);
-    mc.startPlaying();
+    MainComponent* mc = new MainComponent();
+    mc->prepareToPlay(44100);
+    mc->startPlaying();
 
     return 0;
 }
