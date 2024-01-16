@@ -76,7 +76,7 @@ void LipModel::setTubeParameters(double hIn, double rho, double c, double SBar0I
     SBar0 = SBar0In;
     SHalf0 = SHalf0In;
     bCoeff = h * SBar0 / (rho * c * c * k);
-    c1Coeff = w * sqrt(2.0 / rho);
+    c1Coeff = w * std::sqrt(2.0 / rho);
 }
 
 void LipModel::calculateCollision()
@@ -92,7 +92,7 @@ void LipModel::calculateCollision()
     kappa = psiPrev < 0 ? -1 : 1;
     if (eta >= 0)
     {
-        g = kappa * sqrt(Kcol * (alpha + 1) / 2) * pow(global::subplus(eta), (alpha - 1.0) / 2.0);
+        g = kappa * std::sqrt(Kcol * (alpha + 1) / 2) * pow(global::subplus(eta), (alpha - 1.0) / 2.0);
     }
     else
     {
@@ -105,7 +105,7 @@ void LipModel::calculateCollision()
         {
             if (!divisBy0Flag)
             {
-                std::cout << "DIVISION BY 0" << std::endl;
+                // std::cout << "DIVISION BY 0" << std::endl;
                 divisBy0Flag = true;
             }
         }
@@ -124,7 +124,7 @@ void LipModel::calculateDeltaP()
     c2 = b2 + a2 * Sr * oOa1;
     c3 = b1 - a3 * Sr * oOa1;
 
-    deltaPTerm = (-c1 + sqrt(c1 * c1 + 4.0 * c2 * abs(c3))) / (2.0 * c2);
+    deltaPTerm = (-c1 + std::sqrt(c1 * c1 + 4.0 * c2 * std::abs(c3))) / (2.0 * c2);
     deltaP = global::sgn(c3) * deltaPTerm * deltaPTerm;
 }
 void LipModel::calculate()
@@ -141,7 +141,7 @@ void LipModel::calculate()
     psi = psiPrev - 0.5 * g * (yNext - yPrev);
 
     //// Flow Velocities ////
-    Ub = c1 * global::sgn(deltaP) * sqrt(abs(deltaP));
+    Ub = c1 * global::sgn(deltaP) * std::sqrt(std::abs(deltaP));
     Ur = Sr * oO2k * (yNext - yPrev);
 }
 

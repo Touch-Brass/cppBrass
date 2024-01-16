@@ -52,6 +52,7 @@ public:
         pressureVal = pValIn;
         lipFreqVal = lFVal;
     };
+    double pressureVal;
 
 private:
     double k, omega0, M, sig, Sr, w, Kcol, alpha, H0, b, g, kappa, psi, psiPrev, Pm, Ub, Ur;
@@ -75,7 +76,6 @@ private:
 
     double pHPrev, qHPrev = 0;
 
-    double pressureVal;
     double lipFreqVal;
 
     bool divisBy0Flag = false;

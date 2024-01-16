@@ -16,7 +16,7 @@
 #include <portaudio.h>
 
 #define SAMPLE_RATE 44100
-#define FRAMES_PER_BUFFER 64
+#define FRAMES_PER_BUFFER 512
 
 using namespace std::placeholders;
 
@@ -129,21 +129,46 @@ void MainComponent::startPlaying(){
     Pa_StartStream(stream);
 
     float i = 0;
+    lipFreqVal = 500;
+    LVal = 3.5;
+    pressureVal = 6000;
+    trombone->setExtVals(pressureVal, lipFreqVal, LVal);
+    trombone->refreshLipModelInputParams();
+    
+
+
     while(true){
-        i += 1;
-        // if(i > 1) i = 0;
-        // LVal = global::LnonExtended + ((global::Lextended - global::LnonExtended) * i);
-        // lipFreqVal = (2.4 + i) * trombone->getTubeC() / (trombone->getTubeRho() * LVal);
-        lipFreqVal = 273;
-        Pa_Sleep(100);
+        double f = 0;
+        double l = 0;
+        std::cout << "Lip freq: ";
+        std::cin >> f;
+        std::cout << "Length: ";
+        std::cin >> l;
+        lipFreqVal = f;
+        LVal = l;
+        std::cout << "" << std::endl;
+        trombone->setExtVals(pressureVal, lipFreqVal, LVal);
+        trombone->refreshLipModelInputParams();
+
+        // trombone->setExtVals(0, lipFreqVal, LVal);
+        // Pa_Sleep(1000);
     }
+
+    // while(true){
+    //     i += 1;
+    //     if(i > 1) i = 0;
+    //     LVal = global::LnonExtended + ((global::Lextended - global::LnonExtended) * i);
+    //     lipFreqVal = (2.4 + i) * trombone->getTubeC() / (trombone->getTubeRho() * LVal);
+    //     Pa_Sleep(1000);
+    // }
 }
 
 int MainComponent::computeAndOutput(const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData) {
     MainComponent* cmp = (MainComponent*) userData;
 
-    cmp->trombone->setExtVals(1000, cmp->lipFreqVal, cmp->LVal);
-    cmp->trombone->refreshLipModelInputParams();
+    // cmp->trombone->setExtVals(cmp->pressureVal, cmp->lipFreqVal, cmp->LVal);
+    // std::cout << (cmp->trombone->lipModel->pressureVal) << std::endl;
+    // cmp->trombone->refreshLipModelInputParams();
 
     float *out = (float*)output;
 
@@ -155,11 +180,14 @@ int MainComponent::computeAndOutput(const void *input, void *output, unsigned lo
         sample_out = cmp->trombone->getOutput() * 0.001 * global::oOPressureMultiplier;
         sample_out = cmp->lowPass->filter(sample_out);
 
+        ++cmp->t;
+
         cmp->trombone->updateStates();
-        out[i] = (float) global::outputClamp(sample_out);
+        // out[i] = (float) global::outputClamp(sample_out);
+        out[i] = (float) sample_out;
     }
 
-    // cmp->trombone->refreshLipModelInputParams();
+    cmp->trombone->refreshLipModelInputParams();
 
     return paContinue;
 }

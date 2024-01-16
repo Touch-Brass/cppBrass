@@ -54,9 +54,9 @@ public:
 
     double getBellRad() { return tube->getBellRad(); };
 
+    std::unique_ptr<LipModel> lipModel;
 private:
     std::unique_ptr<Tube> tube;
-    std::unique_ptr<LipModel> lipModel;
 
     double k, Pm;
 

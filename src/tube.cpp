@@ -116,7 +116,7 @@ Tube::Tube(ModelParams *params, double k, std::vector<std::vector<double>> &geom
 
     // Radiation
     R1 = rho * c;
-    rL = sqrt(SBar[Nint]) / (2.0 * M_PI);
+    rL = std::sqrt(SBar[Nint]) / (2.0 * M_PI);
     Lr = 0.613 * rho * rL;
     R2 = 0.505 * rho * c;
     Cr = 1.111 * rL / (rho * c * c);
@@ -155,7 +155,7 @@ Tube::Tube(ModelParams *params, double k, std::vector<std::vector<double>> &geom
     {
         // Simple (exponential) Bow Model
         a = 100; // Free parameter
-        BM = sqrt(2 * a) * exp(0.5);
+        BM = std::sqrt(2 * a) * exp(0.5);
 
         Vb = 0.1;  // Bowing speed
         Fb = 8000; // Bowing force / total mass of system;
@@ -372,7 +372,7 @@ void Tube::calculateRadii()
 {
     radii.resize(Nint + 1, 0);
     for (int i = 0; i < Nint + 1; ++i)
-        radii[i] = sqrt(S[i] / M_PI);
+        radii[i] = std::sqrt(S[i] / M_PI);
 }
 double Tube::getKinEnergy()
 {
@@ -608,7 +608,7 @@ void Tube::updateL()
     else if (L > LtoGoTo)
         L -= Linc;
 
-    if (abs(L - LtoGoTo) < Linc)
+    if (std::abs(L - LtoGoTo) < Linc)
     {
         L = LtoGoTo;
     }

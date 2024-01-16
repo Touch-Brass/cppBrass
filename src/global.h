@@ -46,7 +46,7 @@ namespace global
     std::vector<double> linspace(double start, double finish, int N);
     double linspace(double start, double finish, int N, int idx);
 
-    inline double subplus(double val) { return (val + abs(val)) * 0.5; };
+    inline double subplus(double val) { return (val + std::abs(val)) * 0.5; };
 
     inline int sgn(double val) { return (0 < val) - (val < 0); };
 
