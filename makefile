@@ -33,19 +33,27 @@ CXXFLAGS = -Wall -g
 SRC_DIR = src
 OBJ_DIR = out/obj
 BIN_DIR = out/bin
-SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
-OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+SOURCES = $(wildcard $(SRC_DIR)/*.cpp gui/*.cpp)
+SRCS = $(filter-out src/main.cpp gui/main.cpp, $(SOURCES))
+OBJECTS = $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+INCLUDES = $(wildcard /usr/include/x86_64-linux-gnu/qt5/*)
+INCLUDES_GCC = $(addprefix -I, $(INCLUDES))
 
 # Default target
 all: directories program
+
+ui: directories ui-program
 
 # Rule to make the object files
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Rule to make the program
-program: $(OBJECTS)
+program: $(OBJECTS) src/main.cpp
 	$(CXX) $(CXXFLAGS) $^ -o $(BIN_DIR)/$@ -lportaudio
+
+ui-program: $(OBJECTS) gui/main.cpp
+	$(CXX) $(CXXFLAGS) -fPIC -I$(INCLUDES_GCC) -I/usr/include/x86_64-linux-gnu/qt5/ $^ -o $(BIN_DIR)/$@ -lportaudio -lQt5Core -lQt5Gui -lQt5Widgets -lQt5PrintSupport
 
 # Rule to make the necessary directories
 directories:

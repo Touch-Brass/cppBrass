@@ -32,6 +32,7 @@ public:
     void prepareToPlay(double sampleRate);
     void startPlaying();
     static int computeAndOutput(const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData);
+    double pressureVal, lipFreqVal, LVal;
 
 private:
     PaStream* stream;
@@ -41,7 +42,6 @@ private:
     long t = 0;
     bool done = false;
     std::vector<std::vector<double>> geometry;
-    double pressureVal, lipFreqVal, LVal;
     int controlHeight, controlY;
 
     // bool record = true;

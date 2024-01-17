@@ -134,41 +134,15 @@ void MainComponent::startPlaying(){
     pressureVal = 6000;
     trombone->setExtVals(pressureVal, lipFreqVal, LVal);
     trombone->refreshLipModelInputParams();
-    
 
-
-    while(true){
-        double f = 0;
-        double l = 0;
-        std::cout << "Lip freq: ";
-        std::cin >> f;
-        std::cout << "Length: ";
-        std::cin >> l;
-        lipFreqVal = f;
-        LVal = l;
-        std::cout << "" << std::endl;
-        trombone->setExtVals(pressureVal, lipFreqVal, LVal);
-        trombone->refreshLipModelInputParams();
-
-        // trombone->setExtVals(0, lipFreqVal, LVal);
-        // Pa_Sleep(1000);
-    }
-
-    // while(true){
-    //     i += 1;
-    //     if(i > 1) i = 0;
-    //     LVal = global::LnonExtended + ((global::Lextended - global::LnonExtended) * i);
-    //     lipFreqVal = (2.4 + i) * trombone->getTubeC() / (trombone->getTubeRho() * LVal);
-    //     Pa_Sleep(1000);
-    // }
 }
 
 int MainComponent::computeAndOutput(const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData) {
     MainComponent* cmp = (MainComponent*) userData;
 
-    // cmp->trombone->setExtVals(cmp->pressureVal, cmp->lipFreqVal, cmp->LVal);
+    cmp->trombone->setExtVals(cmp->pressureVal, cmp->lipFreqVal, cmp->LVal);
     // std::cout << (cmp->trombone->lipModel->pressureVal) << std::endl;
-    // cmp->trombone->refreshLipModelInputParams();
+    cmp->trombone->refreshLipModelInputParams();
 
     float *out = (float*)output;
 
