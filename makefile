@@ -45,7 +45,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 # Rule to make the program
 program: $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $^ -o $(BIN_DIR)/$@ -lportaudio
+	$(CXX) $(CXXFLAGS) $^ -o $(BIN_DIR)/$@ -lportaudio -lfftw3 -lplot
 
 # Rule to make the necessary directories
 directories:

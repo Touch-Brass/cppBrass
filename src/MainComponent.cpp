@@ -15,8 +15,8 @@
 
 #include <portaudio.h>
 
-#define SAMPLE_RATE 44100
-#define FRAMES_PER_BUFFER 512
+#define SAMPLE_RATE 44100 / 2
+#define FRAMES_PER_BUFFER 4096
 
 using namespace std::placeholders;
 
