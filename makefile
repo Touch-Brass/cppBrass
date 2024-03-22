@@ -53,7 +53,7 @@ program: $(OBJECTS) src/main.cpp
 	$(CXX) $(CXXFLAGS) $^ -o $(BIN_DIR)/$@ -lportaudio
 
 ui-program: $(OBJECTS) gui/main.cpp
-	$(CXX) $(CXXFLAGS) -fPIC -I$(INCLUDES_GCC) -I/usr/include/x86_64-linux-gnu/qt5/ $^ -o $(BIN_DIR)/$@ -lportaudio -lQt5Core -lQt5Gui -lQt5Widgets -lQt5PrintSupport
+	$(CXX) $(CXXFLAGS) -fPIC -I$(INCLUDES_GCC) -I/usr/include/x86_64-linux-gnu/qt5/ $^ -o $(BIN_DIR)/$@ -lportaudio -lQt5Core -lQt5Gui -lQt5Widgets -lQt5PrintSupport -lfftw3
 
 # Rule to make the necessary directories
 directories:

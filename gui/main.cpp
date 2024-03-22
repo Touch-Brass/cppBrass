@@ -1,6 +1,8 @@
 #include <cctype>
 #include <chrono>
 #include <iostream>
+#include <cmath>
+#include <string>
 #include <thread>
 
 #include <stdio.h>
@@ -15,57 +17,109 @@
 #include <QDebug>
 #include <QLabel>
 
+#include <fftw3.h>
+
 #include "../src/MainComponent.h"
 
 #define SAMPLES_PER_FFT 1000
+#define SAMPLE_RATE 1.0f / 0.0003f
 
+#define SERIAL_BUFFER_SIZE 1024
+
+#define DIAL_PREFIX 'd'
+
+
+void calculateDFT(double* input, std::vector<float> freqs, std::vector<float> mags, int size)
+{
+    fftw_complex output[SAMPLES_PER_FFT];
+    // Create FFTW plan
+    fftw_plan plan = fftw_plan_dft_r2c_1d(size, input, output, FFTW_ESTIMATE);
+
+    // Execute the plan
+    fftw_execute(plan);
+
+    // Clean up
+    fftw_destroy_plan(plan);
+
+
+    // std::vector<float> freqs;
+    // std::vector<float> magns;
+
+    for (int i = 0; i < SAMPLES_PER_FFT; ++i)
+    {
+        double magnitude = std::sqrt(output[i][0] * output[i][0] + output[i][1] * output[i][1]);
+        double frequency = i * SAMPLE_RATE / static_cast<double>(SAMPLES_PER_FFT); // Calculate frequency
+
+        freqs.push_back(frequency);
+        mags.push_back(magnitude);
+    }
+}
+
+int getFundamentalFrequency(std::vector<float> freqs, std::vector<float> mags){
+    
+}
+
+std::string port = "/dev/ttyUSB0";
+int device = open(port.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
+char* serialBuffer = (char*)malloc(sizeof(char) * SERIAL_BUFFER_SIZE);
+int bytes_read = 0;
+int buffer_i = 0;
+
+char readStream(){
+    while(buffer_i > bytes_read - 1){
+        buffer_i = 0;
+        bytes_read = read(device, serialBuffer, sizeof(char) * SERIAL_BUFFER_SIZE);
+        // std:: cout << "BYTES_READ " << bytes_read << std::endl;
+    }
+    return serialBuffer[buffer_i++];
+}
 
 void read_serial(QSlider* pressureSlider, QSlider* frequencySlider, QSlider* positionSlider){
-    std::string port = "/dev/ttyUSB0";
-    int device = open(port.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
-    std::cout << device << std::endl;
+    double* readings = (double*) malloc(sizeof(double) * SAMPLES_PER_FFT);
 
-    int16_t* readings = (int16_t*) malloc(sizeof(int16_t) * SAMPLES_PER_FFT);
+    int i = 0;
 
     while(true){
-        for(int i = 0; i < 1000; i++){
+        bool isDialValue = false;
+        std::string number = "";
 
-            std::string number = "";
+        while(true){
+            char next_char = readStream();
 
-            while(true){
-                char next_char;
-                int n = read(device, &next_char, sizeof(next_char));
-
-                if(n == 0){
-                    std::cout << "Sample Error" << std::endl;
-                    continue;
-                }
-
-                // if(next_char == '\r' || next_char == '\n'){
-                //     break;
-                // }
-
-                if(isdigit(next_char) || next_char == '.'){
-                    number += next_char;
-                } else {
-                    break;
-                }
+            if(isdigit(next_char)){
+                number += next_char;
+            } else if(next_char == DIAL_PREFIX){
+                isDialValue = true;
+            } else {
+                break;
             }
+        }
 
-            if(number.empty()){
-                i--;
-                continue;
-            }
-
-            readings[i] = atoi(number.c_str());
+        if(number.empty()) continue;
+        
+        if(isDialValue){
+            std::cout << DIAL_PREFIX << number << std::endl;
+            QMetaObject::invokeMethod(positionSlider, "setValue", Qt::QueuedConnection, Q_ARG(int, std::stod(number.c_str()) * 100 / 1023 + 250));
+        } else {
+            readings[i] = std::stod(number.c_str());
             std::cout << readings[i] << std::endl;
+            i++;
         }
         
         // Perform FFT
+        if(i == 1000){
+            std::vector<float> freqs;
+            std::vector<float> mags;
+            calculateDFT(readings, freqs, mags, SAMPLES_PER_FFT);
 
-        QMetaObject::invokeMethod(pressureSlider, "setValue", Qt::QueuedConnection, Q_ARG(int, 50));
-        QMetaObject::invokeMethod(frequencySlider, "setValue", Qt::QueuedConnection, Q_ARG(int, 450));
-        QMetaObject::invokeMethod(positionSlider, "setValue", Qt::QueuedConnection, Q_ARG(int, 300));
+            int ff = getFundamentalFrequency(freqs, mags);
+
+            QMetaObject::invokeMethod(frequencySlider, "setValue", Qt::QueuedConnection, Q_ARG(int, 450));
+            QMetaObject::invokeMethod(pressureSlider, "setValue", Qt::QueuedConnection, Q_ARG(int, 50));
+
+
+            i = 0;
+        }
     }
 
     close(device);
