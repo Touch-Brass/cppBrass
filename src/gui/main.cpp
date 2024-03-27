@@ -15,8 +15,8 @@
 #include <QLabel>
 
 #include "serial_reader.h"
-#include "../src/MainComponent.h"
-#include "../src/sliding_dft.h"
+#include "MainComponent.h"
+#include "sliding_dft.h"
 
 #define SAMPLES_PER_FFT 1000
 #define SAMPLE_RATE 1.0f / 0.0003f

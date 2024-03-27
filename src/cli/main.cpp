@@ -9,6 +9,8 @@ int main() {
     mc->prepareToPlay(44100);
     mc->startPlaying();
 
+    while(true);
+
     return 0;
 }
 
