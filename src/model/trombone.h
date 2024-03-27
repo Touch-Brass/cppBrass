@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Trombone.h
-    Created: 5 Sep 2020 1:12:46pm
-    Author:  Silvin Willemsen
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include "global.h"
@@ -29,8 +19,6 @@ public:
     float getOutput() { return tube->getOutput(); };
     float getLipOutput() { return lipModel->getY(); };
 
-    void saveToFiles();
-    void closeFiles();
     void updateStates();
 
     void refreshLipModelInputParams() { lipModel->refreshInputParams(); };
@@ -41,7 +29,6 @@ public:
         shouldWait = wait;
         lipModel->setExtVals(pVal, lFVal);
         tube->setExtVals(LVal);
-        //        std::cout << lFVal << " " << 2.0 * tube->getC() / (LVal) << std::endl;
     };
 
     void changeSetting() { tube->changeSetting(); };
@@ -64,9 +51,6 @@ private:
 
     bool shouldLowPassConnection = false;
     bool shouldDispCorr = global::useDispCorr;
-
-    std::ofstream massState, pState, vState, MSave, MwSave, alfSave, energySave, scaledTotEnergySave,
-        maxMSave, maxMwSave, Ssave, output;
 
     bool shouldWait = false; // wait with changing L?
 };

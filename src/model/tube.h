@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Tube.h
-    Created: 5 Sep 2020 1:11:57pm
-    Author:  Silvin Willemsen
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include "global.h"
@@ -122,8 +112,6 @@ public:
     void addRemovePoint();
     void createCustomIp();
 
-    void closeFiles();
-
     void changeSetting() { setting = !setting; };
     void changeSetting(bool b) { setting = b; };
 
@@ -193,8 +181,6 @@ private:
     double qHRadPrev = 0;
 
     double LtoGoTo, Lprev;
-
-    std::ofstream statesSave;
 
     double lpExponent = 10;
 

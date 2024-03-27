@@ -1,11 +1,3 @@
-/*
-  ==============================================================================
-
-    This file was auto-generated!
-
-  ==============================================================================
-*/
-
 #include "MainComponent.h"
 
 #include "model_params.h"
@@ -20,35 +12,18 @@
 
 using namespace std::placeholders;
 
-//==============================================================================
 MainComponent::MainComponent()
 {
-    // Make sure you set the size of the component after
-    // you add any child components.
-
-    // specify the number of input and output channels that we want to open
-
-    // setAudioChannels(global::useMicInput ? 2 : 0, 2);
-    // startTimerHz(15);
-
     Pa_Initialize();
-    // Pa_OpenDefaultStream(&stream, 0, 1, paFloat32, SAMPLE_RATE, FRAMES_PER_BUFFER, computeAndOutput, this);
-    // Pa_StartStream(stream);
-
-    // Pa_Sleep(5000);  // Play for 5 seconds
 }
 
 MainComponent::~MainComponent()
 {
-    // // This shuts down the audio device and clears the audio source.
-    // stopTimer();
-    // shutdownAudio();
     Pa_StopStream(stream);
     Pa_CloseStream(stream);
     Pa_Terminate();
 }
 
-//==============================================================================
 void MainComponent::prepareToPlay(double sampleRate)
 {
 
@@ -63,7 +38,6 @@ void MainComponent::prepareToPlay(double sampleRate)
     params->LnonExtended = global::LnonExtended;
     params->Lextended = global::Lextended;
     params->L = global::LnonExtended;
-    //    parameters.set ("L", 3.653);
 
     // Geometry
     //    parameters.set ("mp", 0.015 * 0.015 * M_PI);                   // mouthpiece cross-sectional area
@@ -101,9 +75,7 @@ void MainComponent::prepareToPlay(double sampleRate)
 
     //// Input ////
     params->Pm = (global::exciteFromStart ? 300 : 0) * global::pressureMultiplier;
-    //    LVal = (*parameters.getVarPointer ("Lextended"));
     trombone = std::make_unique<Trombone>(params, 1.0 / fs, geometry);
-    // addAndMakeVisible(trombone.get()); THIS MIGHT BE JUCE CODE
 
     pressureVal = 0;
     LVal = params->LnonExtended; // start by contracting
@@ -113,15 +85,6 @@ void MainComponent::prepareToPlay(double sampleRate)
 
     lowPass = std::make_unique<LowPass>(std::vector<double>{0.0001343, 0.0005374, 0.0008060, 0.0005374, 0.0001343},
                                         std::vector<double>{1, -3.3964, 4.3648, -2.5119, 0.5456});
-    if (~global::useMicInput)
-    {
-        // pressureSlider.setRange(0, 6000);
-        // pressureSlider.setValue(300 * global::pressureMultiplier);
-        // addAndMakeVisible(pressureSlider); THIS MIGHT BE JUCE CODE
-        // pressureSlider.addListener(this); THIS MIGHT BE JUCE CODE
-        // pressureSlider.setTextBoxStyle(Slider::NoTextBox, true, 0, 0); THIS MIGHT BE JUCE CODE
-    }
-    // setSize(800, 600); THIS MIGHT BE JUCE CODE
 }
 
 void MainComponent::startPlaying(){
@@ -141,7 +104,6 @@ int MainComponent::computeAndOutput(const void *input, void *output, unsigned lo
     MainComponent* cmp = (MainComponent*) userData;
 
     cmp->trombone->setExtVals(cmp->pressureVal, cmp->lipFreqVal, cmp->LVal);
-    // std::cout << (cmp->trombone->lipModel->pressureVal) << std::endl;
     cmp->trombone->refreshLipModelInputParams();
 
     float *out = (float*)output;

@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    LipModel.h
-    Created: 5 Sep 2020 1:11:22pm
-    Author:  Silvin Willemsen
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include "global.h"
@@ -69,7 +59,6 @@ private:
     double yNext;
     double y;
     double yPrev;
-    //    double yTmp;
 
     double lipEnergy1 = -1;
     double colEnergy1 = -1;

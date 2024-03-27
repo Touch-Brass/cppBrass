@@ -1,18 +1,8 @@
-/*
-  ==============================================================================
-
-    LipModel.cpp
-    Created: 5 Sep 2020 1:11:22pm
-    Author:  Silvin Willemsen
-
-  ==============================================================================
-*/
-
 #include "lipmodel.h"
 
 #include <cmath>
 
-//==============================================================================
+
 LipModel::LipModel(ModelParams* params, double k) : k(k),
                                                     lipFreqVal(params->f0),
                                                     omega0(params->omega0),
@@ -48,9 +38,7 @@ LipModel::LipModel(ModelParams* params, double k) : k(k),
         yPrev = 0; // energy might not like this..
         pressureVal = 0;
     }
-    //    Pm = 0;
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
+    
     oOk = 1.0 / k;
     oOM = 1.0 / M;
 
@@ -105,7 +93,6 @@ void LipModel::calculateCollision()
         {
             if (!divisBy0Flag)
             {
-                // std::cout << "DIVISION BY 0" << std::endl;
                 divisBy0Flag = true;
             }
         }

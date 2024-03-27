@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Tube.cpp
-    Created: 5 Sep 2020 1:11:57pm
-    Author:  Silvin Willemsen
-
-  ==============================================================================
-*/
-
 #include "tube.h"
 #include "model_params.h"
 
@@ -146,8 +136,6 @@ Tube::Tube(ModelParams *params, double k, std::vector<std::vector<double>> &geom
     quadIp.resize(3, 0);
     customIp.resize(4, 0);
 
-    statesSave.open("statesSave.csv");
-
     uvMmhPrev = 0;
     wvhPrev = 0;
 
@@ -169,7 +157,6 @@ Tube::Tube(ModelParams *params, double k, std::vector<std::vector<double>> &geom
 
 Tube::~Tube()
 {
-    closeFiles();
 }
 
 void Tube::calculateThermodynamicConstants()
@@ -479,7 +466,6 @@ void Tube::addRemovePoint()
             //            wvmh = wv[1][0];
             ++Mw;
         }
-        statesSave << up[1][M - 1] << "," << up[1][M] << "," << wp[1][0] << "," << wp[1][1] << "," << uv[1][M - 2] << "," << uv[1][M - 1] << "," << wv[1][0] << "," << wv[1][1] << "," << uvMph << "," << wvmh << ";\n";
     }
     else
     {
@@ -515,7 +501,6 @@ void Tube::addRemovePoint()
             wv[0][Mw - 1] = 0;
             --Mw;
         }
-        statesSave << up[1][M - 1] << "," << up[1][M] << "," << wp[1][0] << "," << wp[1][1] << "," << uv[1][M - 2] << "," << uv[1][M - 1] << "," << wv[1][0] << "," << wv[1][1] << "," << uvMph << "," << wvmh << ";\n";
     }
 }
 
@@ -527,11 +512,6 @@ void Tube::createCustomIp()
     customIp[1] = 2.0 * alfTick / (alfTick + 2.0);
     customIp[2] = 2.0 / (alfTick + 2.0);
     customIp[3] = -2.0 * alfTick / ((alfTick + 3.0) * (alfTick + 2.0));
-}
-
-void Tube::closeFiles()
-{
-    statesSave.close();
 }
 
 void Tube::lowPassConnection()
