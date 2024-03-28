@@ -5,9 +5,9 @@ project(
     VERSION 1.0.0
 )
 
-file(GLOB SRCS CONFIGURE_DEPENDS "src/model/*.cpp" "src/dsp/*.cpp" "src/io/*.cpp")
+file(GLOB SRCS CONFIGURE_DEPENDS "src/model/*.cpp" "src/dsp/*.cpp" "src/io/*.cpp" "src/controller/*.cpp")
 
-include_directories("src/model/" "src/dsp/" "src/io/")
+include_directories("src/model/" "src/dsp/" "src/io/" "src/controller/")
 
 set(PROJECT_NAME_CLI ${PROJECT_NAME}-cli)
 add_executable(${PROJECT_NAME_CLI} src/cli/main.cpp ${SRCS})
