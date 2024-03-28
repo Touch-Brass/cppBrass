@@ -1,7 +1,7 @@
 #pragma once
 
 #include "MainComponent.h"
-#include "observer.h"
+#include "observer.hpp"
 #include "serial_scanner.h"
 #include "sliding_dft.h"
 

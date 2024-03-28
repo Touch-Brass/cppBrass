@@ -36,8 +36,8 @@ void SerialController::start(){
             }
 
             case TOKEN_TYPE_DIAL: {
-                double slidePos = (float) next_word->value * 100 / 1024 + 250;
-                this->mc->LVal = (float) slidePos;
+                double slidePos = next_word->value / 1024. + 2.5;
+                this->mc->LVal = slidePos;
                 this->observer->updateSlidePosition(slidePos);
                 break;
             }
@@ -52,7 +52,7 @@ void SerialController::start(){
 
         if(i > 100){
             std::pair<double, double> fundamental = getFundamentalFrequency(this->sdft);
-            double pressure = fundamental.second * 500 / 50000;
+            double pressure = fundamental.second * 50 * 500 / 50000;
 
             mc->lipFreqVal = fundamental.first;
             mc->pressureVal = pressure;

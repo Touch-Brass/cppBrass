@@ -18,6 +18,72 @@
 #include "MainComponent.h"
 #include "serial_controller.h"
 
+using namespace std::placeholders;
+
+
+class Application{
+
+    public:
+        Application(int argc, char **argv){
+            QApplication app(argc, argv);
+
+            QWidget window;
+            QVBoxLayout layout(&window);
+
+            pressureLabel = new QLabel("Pressure");
+            pressureSlider = new QSlider(Qt::Horizontal);
+            pressureSlider->setRange(0, 500);
+            QObject::connect(pressureSlider, &QSlider::valueChanged, [this](int value) {
+                pressureLabel->setText(QString("Pressure: %1").arg(value));
+            });
+
+            frequencyLabel = new QLabel("Frequency");
+            frequencySlider = new QSlider(Qt::Horizontal);
+            frequencySlider->setRange(20, 1000);
+            QObject::connect(frequencySlider, &QSlider::valueChanged, [this](int value) {
+                frequencyLabel->setText(QString("Frequency: %1").arg(value));
+            });
+
+            slideLabel = new QLabel("Slide Position");
+            slideSlider = new QSlider(Qt::Horizontal);
+            slideSlider->setRange(250, 350);
+            QObject::connect(slideSlider, &QSlider::valueChanged, [this](int value) {
+                slideLabel->setText(QString("Slide Position: %1").arg(value));
+            });
+
+            layout.addWidget(pressureLabel);
+            layout.addWidget(pressureSlider);
+            layout.addWidget(frequencyLabel);
+            layout.addWidget(frequencySlider);
+            layout.addWidget(slideLabel);
+            layout.addWidget(slideSlider);
+
+            window.show();
+
+            app.exec();
+        }
+
+        void updatePressure(double pressure){
+            pressureSlider->setValue(pressure);
+        }
+
+        void updateFrequency(double frequency){
+            frequencySlider->setValue(frequency);
+        }
+
+        void updateSlidePosition(double slidePosition){
+            slideSlider->setValue(slidePosition);
+        }
+    
+    private:
+        QLabel* pressureLabel;
+        QSlider* pressureSlider;
+        QLabel* frequencyLabel;
+        QSlider* frequencySlider;
+        QLabel* slideLabel;
+        QSlider* slideSlider;
+
+};
 
 int main(int argc, char **argv)
 {
@@ -25,45 +91,17 @@ int main(int argc, char **argv)
     mc->prepareToPlay(44100);
     mc->startPlaying();
 
-    QApplication app(argc, argv);
+    Application* app = new Application(argc, argv);
 
-    QWidget window;
-    QVBoxLayout layout(&window);
-
-    QLabel label1("Pressure");
-    QSlider slider1(Qt::Horizontal);
-    slider1.setRange(0, 500);
-    QObject::connect(&slider1, &QSlider::valueChanged, [&label1, mc](int value) {
-        label1.setText(QString("Pressure: %1").arg(value));
-    });
-
-    QLabel label2("Frequency");
-    QSlider slider2(Qt::Horizontal);
-    slider2.setRange(20, 1000);
-    QObject::connect(&slider2, &QSlider::valueChanged, [&label2, mc](int value) {
-        label2.setText(QString("Frequency: %1").arg(value));
-    });
-
-    QLabel label3("Slide Position");
-    QSlider slider3(Qt::Horizontal);
-    slider3.setRange(250, 350);
-    QObject::connect(&slider3, &QSlider::valueChanged, [&label3, mc](int value) {
-        label3.setText(QString("Slide Position: %1").arg(value));
-    });
-
-    layout.addWidget(&label1);
-    layout.addWidget(&slider1);
-    layout.addWidget(&label2);
-    layout.addWidget(&slider2);
-    layout.addWidget(&label3);
-    layout.addWidget(&slider3);
-
-    window.show();
-
-    SerialController serialController = SerialController(mc);
+    Observer* obs = new Observer {
+        std::bind(&Application::updatePressure, app, _1),
+        std::bind(&Application::updateFrequency, app, _1),
+        std::bind(&Application::updateSlidePosition, app, _1)
+    };
+    SerialController serialController = SerialController(mc, obs);
 
     std::thread serial_controller_thread(std::bind(&SerialController::start, &serialController));
     serial_controller_thread.detach();
 
-    return app.exec();
+    return 0;
 }
