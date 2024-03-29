@@ -2,7 +2,9 @@
 
 #include "peak_detection.h"
 
+
 void noop(double){}
+
 
 SerialController::SerialController(MainComponent* mc){
     this->mc = mc;
@@ -27,6 +29,7 @@ void SerialController::start(){
     int i = 0;
     while(spinning){
         Token* next_word = serialScanner.nextWord();
+
         
         switch(next_word->tokenType){
             
@@ -52,13 +55,13 @@ void SerialController::start(){
 
         if(i > 100){
             std::pair<double, double> fundamental = getFundamentalFrequency(this->sdft);
-            double pressure = fundamental.second * 50 * 500 / 50000;
+            double pressure = (fundamental.second + mc->pressureVal) / 2;
 
             mc->lipFreqVal = fundamental.first;
             mc->pressureVal = pressure;
             
             observer->updateFrequency(fundamental.first);
-            observer->updatePressure(pressure);
+            observer->updatePressure(pressure / 100);
 
             i = 0;
         }

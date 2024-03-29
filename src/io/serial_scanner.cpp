@@ -1,6 +1,6 @@
 #include "serial_scanner.h"
 
-
+#include <iostream>
 
 SerialScanner::SerialScanner(std::string port, int bufferSize){
     this->serialReader = new SerialReader(port, bufferSize);
@@ -25,10 +25,7 @@ Token* SerialScanner::nextWord(){
             } else if(next_char == DIAL_PREFIX){
                 tokenType = TOKEN_TYPE_DIAL;
             } else {
-                return new Token{
-                    0,
-                    TOKEN_ERROR
-                };
+                break;
             }
         }
     }
