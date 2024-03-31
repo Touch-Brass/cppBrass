@@ -6,15 +6,17 @@
 void noop(double){}
 
 
-SerialController::SerialController(MainComponent* mc){
+SerialController::SerialController(MainComponent* mc, InputScanner* inputScanner){
     this->mc = mc;
     this->observer = new Observer { noop, noop, noop };
+    this->inputScanner = inputScanner;
 }
 
 
-SerialController::SerialController(MainComponent* mc, Observer* observer){
+SerialController::SerialController(MainComponent* mc, InputScanner* inputScanner, Observer* observer){
     this->mc = mc;
     this->observer = observer;
+    this->inputScanner = inputScanner;
 }
 
 
@@ -28,7 +30,7 @@ void SerialController::start(){
 
     int i = 0;
     while(spinning){
-        Token* next_word = serialScanner.nextWord();
+        Token* next_word = inputScanner->nextWord();
 
         
         switch(next_word->tokenType){
