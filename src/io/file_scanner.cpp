@@ -48,7 +48,7 @@ Token* FileScanner::nextWord(){
         tokenType = TOKEN_TYPE_DIAL;
         number = number.substr(1);
     } else {
-        std::this_thread::sleep_for(300us);
+        std::this_thread::sleep_for(250us);
     }
     
     return new Token {
