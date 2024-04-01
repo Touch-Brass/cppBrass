@@ -1,7 +1,11 @@
 #include "slide_component.h"
 
 
-SlideComponent::SlideComponent(QWidget* parent) : QGridLayout(parent){
+SlideComponent::SlideComponent(){
+    this->setObjectName("component");
+    
+    slideLayout = new QGridLayout(this);
+
     slideLabel = new QLabel("Slide Position");
     slideLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     slideSlider = new QSlider(Qt::Horizontal);
@@ -11,8 +15,8 @@ SlideComponent::SlideComponent(QWidget* parent) : QGridLayout(parent){
         slideLabel->setText(QString("Slide Position: %1").arg(value));
     });
 
-    this->addWidget(slideLabel, 0, 0);
-    this->addWidget(slideSlider, 1, 0);
+    slideLayout->addWidget(slideLabel, 0, 0);
+    slideLayout->addWidget(slideSlider, 1, 0);
 }
 
 

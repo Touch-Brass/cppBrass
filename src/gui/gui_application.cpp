@@ -9,18 +9,26 @@ GuiApplication::GuiApplication(){
     titleLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     titleLabel->setStyleSheet("font-size: 25px;");
 
-    pressureComponent = new PressureComponent(window);
-    noteComponent = new NoteComponent(window);
-    slideComponent = new SlideComponent(window);
+    window->setStyleSheet(
+        "QWidget#component{"
+            "padding: 10px;"
+            "background-color: white;"
+            "border: solid black 1px;"
+            "border-radius: 5px;"
+        "}");
+
+    pressureComponent = new PressureComponent();
+    noteComponent = new NoteComponent();
+    slideComponent = new SlideComponent();
 
     mainLayout->addWidget(titleLabel, 0, 0, 1, 2);
-    mainLayout->addLayout(pressureComponent, 1, 0, 2, 1);
-    mainLayout->addLayout(noteComponent, 1, 1);
-    mainLayout->addLayout(slideComponent, 2, 1);
+    mainLayout->addWidget(pressureComponent, 1, 0, 2, 1);
+    mainLayout->addWidget(noteComponent, 1, 1);
+    mainLayout->addWidget(slideComponent, 2, 1);
     mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding), 6, 1);
 
-    mainLayout->setColumnStretch(1, 2);
-    mainLayout->setColumnStretch(2, 2);
+    mainLayout->setColumnStretch(1, 0);
+    mainLayout->setColumnStretch(2, 0);
 
     window->show();
 }

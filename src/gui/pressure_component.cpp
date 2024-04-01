@@ -1,20 +1,25 @@
 #include "pressure_component.h"
 
 
-PressureComponent::PressureComponent(QWidget* parent) : QVBoxLayout(parent){
+PressureComponent::PressureComponent(){
+    this->setObjectName("component");
+
+    pressureLayout = new QVBoxLayout(this);
+
     pressureLabel = new QLabel("Pressure");
-    pressureLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    // pressureLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    pressureLabel->setStyleSheet("font-size: 20px;");
     pressureBar = new QProgressBar();
     pressureBar->setOrientation(Qt::Vertical);
-    // pressureBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    // pressureBar->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     pressureBar->setRange(0, 500);
-    QObject::connect(pressureBar, &QProgressBar::valueChanged, [this](int value) {
-        pressureLabel->setText(QString("Pressure: %1").arg(value));
-        pressureBar->setFormat(QString::number(value));
-    });
+    // QObject::connect(pressureBar, &QProgressBar::valueChanged, [this](int value) {
+    //     pressureLabel->setText(QString("Pressure: %1").arg(value));
+    // });
 
-    this->addWidget(pressureBar, 0, Qt::AlignCenter);
-    this->addWidget(pressureLabel, 0, Qt::AlignCenter);
+    pressureLayout->addWidget(pressureLabel, 0, Qt::AlignHCenter);
+    pressureLayout->addStretch(1);
+    pressureLayout->addWidget(pressureBar, 10, Qt::AlignHCenter);
 }
 
 
