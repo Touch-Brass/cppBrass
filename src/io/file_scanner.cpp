@@ -21,6 +21,7 @@ FileScanner::FileScanner(std::string filename){
 
 
 FileScanner::~FileScanner(){
+    file_stream->close();
     delete file_stream;
 }
 
@@ -39,7 +40,7 @@ Token* FileScanner::nextWord(){
             file_stream->clear();
             file_stream->seekg(0);
         }
-        getline(*file_stream, number);
+        std::getline(*file_stream, number);
         rtrim(number);
     }
     

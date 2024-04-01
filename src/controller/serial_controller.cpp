@@ -10,6 +10,7 @@ SerialController::SerialController(MainComponent* mc, InputScanner* inputScanner
     this->mc = mc;
     this->observer = new Observer { noop, noop, noop };
     this->inputScanner = inputScanner;
+    this->sdft = new SlidingDFT<double, SAMPLES_PER_FFT>();
 }
 
 
@@ -17,6 +18,7 @@ SerialController::SerialController(MainComponent* mc, InputScanner* inputScanner
     this->mc = mc;
     this->observer = observer;
     this->inputScanner = inputScanner;
+    this->sdft = new SlidingDFT<double, SAMPLES_PER_FFT>();
 }
 
 
@@ -36,7 +38,7 @@ void SerialController::start(){
         switch(next_word->tokenType){
             
             case TOKEN_TYPE_MIC: {
-                sdft.update(next_word->value);
+                sdft->update(next_word->value);
                 break;
             }
 

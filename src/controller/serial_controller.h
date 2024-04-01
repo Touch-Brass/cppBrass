@@ -24,7 +24,7 @@ class SerialController{
         Observer* observer;
 
         InputScanner* inputScanner;
-        SlidingDFT<double, SAMPLES_PER_FFT> sdft = SlidingDFT<double, SAMPLES_PER_FFT>();
+        SlidingDFT<double, SAMPLES_PER_FFT>* sdft;
 
         bool spinning = true;
 
