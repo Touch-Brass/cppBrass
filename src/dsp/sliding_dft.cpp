@@ -3,6 +3,7 @@
 
 // Explicit instantiations
 template class SlidingDFT<double, 1000>;
+template class SlidingDFT<double, 1500>;
 
 template <class NumberFormat, size_t DFT_Length>
 SlidingDFT<NumberFormat, DFT_Length>::SlidingDFT() {

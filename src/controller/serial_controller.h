@@ -5,7 +5,7 @@
 #include "input_scanner.h"
 #include "sliding_dft.h"
 
-#define SAMPLES_PER_FFT 1000
+#define SAMPLES_PER_FFT 1500
 #define SAMPLE_RATE 1.0f / 0.0003f
 
 
