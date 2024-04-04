@@ -2,7 +2,7 @@
 
 GuiApplication::GuiApplication(){
     window = new QWidget();
-    window->setFixedSize(1000, 750);
+    window->setFixedSize(1000, 550);
     mainLayout = new QGridLayout(window);
 
     titleLabel = new QLabel("Digital Trombone");
@@ -22,10 +22,10 @@ GuiApplication::GuiApplication(){
     slideComponent = new SlideComponent();
 
     mainLayout->addWidget(titleLabel, 0, 0, 1, 2);
-    mainLayout->addWidget(pressureComponent, 1, 0, 2, 1);
-    mainLayout->addWidget(noteComponent, 1, 1);
-    mainLayout->addWidget(slideComponent, 2, 1);
-    mainLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding), 6, 1);
+    mainLayout->addItem(new QSpacerItem(0, 20), 1, 0);
+    mainLayout->addWidget(pressureComponent, 2, 0, 2, 1);
+    mainLayout->addWidget(noteComponent, 2, 1);
+    mainLayout->addWidget(slideComponent, 3, 1);
 
     mainLayout->setColumnStretch(1, 0);
     mainLayout->setColumnStretch(2, 0);

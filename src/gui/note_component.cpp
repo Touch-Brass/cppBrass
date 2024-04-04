@@ -64,7 +64,18 @@ NoteComponent::NoteComponent(){
 }
 
 void NoteComponent::updateFrequency(double frequency){
+    if(frequency == 0){
+        QMetaObject::invokeMethod(noteLabel, "setText", Qt::QueuedConnection, Q_ARG(QString, "--"));
+        QMetaObject::invokeMethod(freqLabel, "setText", Qt::QueuedConnection, Q_ARG(QString, ""));
+
+        for(int i = 0; i < 5; i++){
+            QMetaObject::invokeMethod(centBarsNegative.at(i)->graphicsEffect(), "setOpacity", Qt::QueuedConnection, Q_ARG(double, 1.));
+            QMetaObject::invokeMethod(centBarsPositive.at(i)->graphicsEffect(), "setOpacity", Qt::QueuedConnection, Q_ARG(double, 1.));
+        }
+        return;
+    }
     std::pair<std::string, int> note = freq_to_note(frequency);
+
     QMetaObject::invokeMethod(noteLabel, "setText", Qt::QueuedConnection, Q_ARG(QString, QString("%1").arg(note.first.c_str())));
     QMetaObject::invokeMethod(freqLabel, "setText", Qt::QueuedConnection, Q_ARG(QString, QString("%1 %2").arg(std::to_string((int) frequency).c_str(), "Hz")));
     
@@ -72,19 +83,15 @@ void NoteComponent::updateFrequency(double frequency){
     for(int i = 0; i < 5; i++){
         QMetaObject::invokeMethod(centBarsNegative.at(i)->graphicsEffect(), "setOpacity", Qt::QueuedConnection, Q_ARG(double, 0.));
         QMetaObject::invokeMethod(centBarsPositive.at(i)->graphicsEffect(), "setOpacity", Qt::QueuedConnection, Q_ARG(double, 0.));
-        // QMetaObject::invokeMethod(centBarsNegative.at(i), "setVisible", Qt::QueuedConnection, Q_ARG(bool, (bool)false));
-        // QMetaObject::invokeMethod(centBarsPositive.at(i), "setVisible", Qt::QueuedConnection, Q_ARG(bool, (bool)false));
     }
     
     if(cents < 0){
         for(int i = 0; i > cents; i--){
             QMetaObject::invokeMethod(centBarsNegative.at(4 + i)->graphicsEffect(), "setOpacity", Qt::QueuedConnection, Q_ARG(double, 1.));
-            // QMetaObject::invokeMethod(centBarsNegative.at(4 + i), "setVisible", Qt::QueuedConnection, Q_ARG(bool, (bool)true));
         }
     } else {
         for(int i = 0; i < cents; i++){
             QMetaObject::invokeMethod(centBarsPositive.at(i)->graphicsEffect(), "setOpacity", Qt::QueuedConnection, Q_ARG(double, 1.));
-            // QMetaObject::invokeMethod(centBarsPositive.at(i), "setVisible", Qt::QueuedConnection, Q_ARG(bool, (bool)true));
         }
     }
 }
